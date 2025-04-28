@@ -1,0 +1,3176 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Go-Kratos Console API",
+    "description": "Management console for Go-Kratos",
+    "contact": {
+      "name": "Sendya",
+      "url": "https://github.com/sendya",
+      "email": "yladmxa@gmail.com"
+    },
+    "license": {
+      "name": "Apache License",
+      "url": "https://github.com/google/gnostic/blob/master/LICENSE"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/console/app": {
+      "get": {
+        "tags": [
+          "App"
+        ],
+        "operationId": "App_List",
+        "parameters": [
+          {
+            "name": "pagination.current",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.total",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.raw_total",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "namespace_id",
+            "in": "query",
+            "description": "命名空间ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "应用名称",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.AppListReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "App"
+        ],
+        "operationId": "App_Create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.resource.AppInfo"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.AppCreateReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/app/-/metas": {
+      "get": {
+        "tags": [
+          "App"
+        ],
+        "operationId": "App_NamespaceAppList",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.NamespaceAppListReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/app/{id}": {
+      "get": {
+        "tags": [
+          "App"
+        ],
+        "operationId": "App_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.AppGetReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "App"
+        ],
+        "operationId": "App_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.resource.AppUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.AppUpdateReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "App"
+        ],
+        "operationId": "App_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.AppDeleteReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/discovery/services/-/online": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "operationId": "Discovery_OnlineServices",
+        "parameters": [
+          {
+            "name": "pagination.current",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.total",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.raw_total",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "service name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "service namespace",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.discovery.OnlineServiceReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/kv/-/value": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "operationId": "Discovery_KVGetValue",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cluster",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.discovery.KVGetValueReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/kv/clusters": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "operationId": "Discovery_KVListClusters",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.discovery.KVListClustersReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/kv/keys": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "operationId": "Discovery_KVListKeys",
+        "parameters": [
+          {
+            "name": "cluster",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.discovery.KVListKeysReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/kv/{id}/hang": {
+      "put": {
+        "tags": [
+          "Discovery"
+        ],
+        "operationId": "Discovery_KVUpdateHang",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "主键",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.discovery.KVUpdateHangRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.discovery.KVUpdateHangReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/namespace": {
+      "get": {
+        "tags": [
+          "Namespace"
+        ],
+        "operationId": "Namespace_List",
+        "parameters": [
+          {
+            "name": "pagination.current",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.total",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.raw_total",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.NamespaceListReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Namespace"
+        ],
+        "operationId": "Namespace_Create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.resource.NamespaceCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.NamespaceCreateReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/namespace/-/options": {
+      "get": {
+        "tags": [
+          "Namespace"
+        ],
+        "operationId": "Namespace_SimpleList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.NamespaceSimpleListReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/namespace/{id}": {
+      "get": {
+        "tags": [
+          "Namespace"
+        ],
+        "operationId": "Namespace_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.NamespaceGetReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Namespace"
+        ],
+        "operationId": "Namespace_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.resource.NamespaceUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.NamespaceUpdateReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Namespace"
+        ],
+        "operationId": "Namespace_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.NamespaceDeleteReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/node": {
+      "get": {
+        "tags": [
+          "Node"
+        ],
+        "operationId": "Node_List",
+        "parameters": [
+          {
+            "name": "pagination.current",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.total",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.raw_total",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.NodeListReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Node"
+        ],
+        "operationId": "Node_Create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.resource.CreateNodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.CreateNodeReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/node/{id}": {
+      "put": {
+        "tags": [
+          "Node"
+        ],
+        "operationId": "Node_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "节点ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.resource.UpdateNodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.UpdateNodeReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/permission": {
+      "get": {
+        "tags": [
+          "Permission"
+        ],
+        "operationId": "Permission_ListPermission",
+        "parameters": [
+          {
+            "name": "pagination.current",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.total",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.raw_total",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "alias",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "enum"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.ListPermissionReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Permission"
+        ],
+        "operationId": "Permission_CreatePermission",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.administration.CreatePermissionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.CreatePermissionReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/permission/{id}": {
+      "get": {
+        "tags": [
+          "Permission"
+        ],
+        "operationId": "Permission_GetPermission",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.GetPermissionReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Permission"
+        ],
+        "operationId": "Permission_UpdatePermission",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.administration.UpdatePermissionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.UpdatePermissionReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Permission"
+        ],
+        "operationId": "Permission_DeletePermission",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.DeletePermissionReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/role": {
+      "get": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "Role_ListRole",
+        "parameters": [
+          {
+            "name": "pagination.current",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.total",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.raw_total",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.ListRoleReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "Role_CreateRole",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.administration.CreateRoleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.CreateRoleReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/role/{id}": {
+      "get": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "Role_GetRole",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.GetRoleReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "Role_UpdateRole",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.administration.UpdateRoleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.UpdateRoleReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "Role_DeleteRole",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.DeleteRoleReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/role/{id}/permission": {
+      "put": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "Role_BindPermission",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.administration.BindPermissionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.BindPermissionReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/role/{id}/permission/{permission_id}": {
+      "put": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "Role_UnbindPermission",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "permission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.administration.UnbindPermissionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.UnbindPermissionReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/user": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_ListUser",
+        "parameters": [
+          {
+            "name": "pagination.current",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.total",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.raw_total",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.ListUserReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_CreateUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.administration.CreateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.CreateUserReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/user/{id}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_GetUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.GetUserReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_UpdateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.administration.UpdateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.UpdateUserReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_DeleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.DeleteUserReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/user/{id}/namespace": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_BindNamespace",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.administration.BindNamespaceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.BindNamespaceReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/user/{id}/namespace/{namespace_id}": {
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_UnbindNamespace",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "namespace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.UnbindNamespaceReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/user/{id}/role": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_BindRole",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.administration.BindRoleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.BindRoleReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/user/{id}/role/{role_id}": {
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_UnbindRole",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "role_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.administration.UnbindRoleReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/zone": {
+      "get": {
+        "tags": [
+          "Zone"
+        ],
+        "description": "List returns a list of zones.\n\n The list is sorted by zone id.",
+        "operationId": "Zone_List",
+        "parameters": [
+          {
+            "name": "pagination.current",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.total",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagination.raw_total",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "env",
+            "in": "query",
+            "description": "查询条件 env 环境变量",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "查询条件 status 状态 1=正常，2=禁用",
+            "schema": {
+              "type": "integer",
+              "format": "enum"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.GetZoneListReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Zone"
+        ],
+        "description": "Create creates a new zone.\n\n ...",
+        "operationId": "Zone_Create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.resource.CreateZoneRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.CreateZoneReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/zone/simple": {
+      "get": {
+        "tags": [
+          "Zone"
+        ],
+        "description": "SimpleList returns a simple-list of zones.\n\n The list is sorted by zone create time.",
+        "operationId": "Zone_SimpleList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.SimpleListReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/zone/{id}": {
+      "get": {
+        "tags": [
+          "Zone"
+        ],
+        "description": "Get returns the zone.\n\n Query parameter \"id\" is required.\n Example: /api/console/zone/1",
+        "operationId": "Zone_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "可用区ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.GetZoneReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Zone"
+        ],
+        "description": "Update updates the zone.\n\n ...",
+        "operationId": "Zone_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.resource.UpdateZoneRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.UpdateZoneReply"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Zone"
+        ],
+        "description": "Delete deletes the zone.\n\n ...",
+        "operationId": "Zone_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.DeleteZoneReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/zone/{id}/disable": {
+      "post": {
+        "tags": [
+          "Zone"
+        ],
+        "description": "Disable disables the zone.\n\n ...",
+        "operationId": "Zone_Disable",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "可用区ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.resource.DisableZoneRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.resource.DisableZoneReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "api.console.administration.Action": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "checked": {
+            "type": "boolean"
+          }
+        }
+      },
+      "api.console.administration.BindNamespaceReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.BindNamespaceRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "namespace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.administration.BindPermissionReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.BindPermissionRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "permission_id": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.Action"
+            }
+          },
+          "data_access": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.Action"
+            }
+          }
+        }
+      },
+      "api.console.administration.BindRoleReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.BindRoleRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "role_id": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.administration.CreatePermissionReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.CreatePermissionRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.Action"
+            }
+          },
+          "status": {
+            "type": "integer",
+            "format": "enum"
+          }
+        }
+      },
+      "api.console.administration.CreateRoleReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.CreateRoleRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "api.console.administration.CreateUserReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.CreateUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "re_password": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "role_id": {
+            "type": "string"
+          },
+          "omit_perm": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "api.console.administration.DeletePermissionReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.DeleteRoleReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.DeleteUserReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.GetPermissionReply": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.Action"
+            }
+          },
+          "status": {
+            "type": "integer",
+            "format": "enum"
+          }
+        }
+      },
+      "api.console.administration.GetRoleReply": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.Action"
+            }
+          },
+          "data_access": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.Action"
+            }
+          }
+        }
+      },
+      "api.console.administration.GetUserReply": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/api.console.administration.UserInfo"
+          },
+          "role_id": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.administration.ListPermissionReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.PermissionInfo"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/protobuf.Pagination"
+          }
+        }
+      },
+      "api.console.administration.ListRoleReply": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/protobuf.Pagination"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.RoleInfo"
+            }
+          }
+        }
+      },
+      "api.console.administration.ListUserReply": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/protobuf.Pagination"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.UserInfo"
+            }
+          }
+        }
+      },
+      "api.console.administration.PermissionInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.Action"
+            }
+          },
+          "status": {
+            "type": "integer",
+            "format": "enum"
+          }
+        }
+      },
+      "api.console.administration.RoleInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.Action"
+            }
+          },
+          "data_access": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.Action"
+            }
+          }
+        }
+      },
+      "api.console.administration.UnbindNamespaceReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.UnbindPermissionReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.UnbindPermissionRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "permission_id": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.administration.UnbindRoleReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.UpdatePermissionReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.UpdatePermissionRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.Action"
+            }
+          },
+          "status": {
+            "type": "integer",
+            "format": "enum"
+          }
+        }
+      },
+      "api.console.administration.UpdateRoleReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.UpdateRoleRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "api.console.administration.UpdateUserReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "re_password": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "enum"
+          }
+        }
+      },
+      "api.console.administration.UserInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "avatar": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "enum"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "role_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "api.console.discovery.KVGetValueReply": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.discovery.KVListClustersReply": {
+        "type": "object",
+        "properties": {
+          "clusters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "api.console.discovery.KVListKeysReply": {
+        "type": "object",
+        "properties": {
+          "keys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "api.console.discovery.KVUpdateHangReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.discovery.KVUpdateHangRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "主键"
+          },
+          "hang": {
+            "type": "boolean",
+            "description": "挂起状态 true 为挂起1111"
+          }
+        }
+      },
+      "api.console.discovery.OnlineServiceReply": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/protobuf.Pagination"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.discovery.ServiceGroup"
+            }
+          }
+        }
+      },
+      "api.console.discovery.Service": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string",
+            "description": "唯一标识"
+          },
+          "hostname": {
+            "type": "string",
+            "description": "主机名"
+          },
+          "name": {
+            "type": "string",
+            "description": "服务名称"
+          },
+          "version": {
+            "type": "string",
+            "description": "版本"
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "服务地址"
+          },
+          "cluster": {
+            "type": "string",
+            "description": "集群"
+          },
+          "hang": {
+            "type": "boolean",
+            "description": "挂起状态 true 为挂起"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "元信息"
+          },
+          "namespace": {
+            "type": "string",
+            "description": "命名空间"
+          },
+          "last_healthy_sec": {
+            "type": "integer",
+            "description": "上次心跳间隔",
+            "format": "int32"
+          }
+        }
+      },
+      "api.console.discovery.ServiceGroup": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "唯一标识"
+          },
+          "hostname": {
+            "type": "string",
+            "description": "主机名"
+          },
+          "name": {
+            "type": "string",
+            "description": "服务名称"
+          },
+          "version": {
+            "type": "string",
+            "description": "版本"
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "服务地址"
+          },
+          "clusters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "集群"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.discovery.Service"
+            },
+            "description": "同服务，不同实例的数组信息"
+          },
+          "namespace": {
+            "type": "string",
+            "description": "命名空间"
+          },
+          "is_group": {
+            "type": "boolean",
+            "description": "数据类型"
+          }
+        }
+      },
+      "api.console.resource.Agent": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "integer",
+            "description": "部署状态",
+            "format": "enum"
+          },
+          "heartbeat_time": {
+            "type": "string",
+            "description": "上次心跳时间"
+          },
+          "version": {
+            "type": "string",
+            "description": "Agent版本"
+          }
+        }
+      },
+      "api.console.resource.AppCreateReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/api.console.resource.AppInfo"
+          }
+        }
+      },
+      "api.console.resource.AppDeleteReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.resource.AppGetReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/api.console.resource.AppInfo"
+          }
+        }
+      },
+      "api.console.resource.AppInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "唯一键"
+          },
+          "name": {
+            "type": "string",
+            "description": "应用名称"
+          },
+          "alias": {
+            "type": "string",
+            "description": "应用别名"
+          },
+          "description": {
+            "type": "string",
+            "description": "应用描述"
+          },
+          "icon": {
+            "type": "string",
+            "description": "应用图标"
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.resource.AppInfo_AppPort"
+            },
+            "description": "应用端口"
+          },
+          "type": {
+            "type": "integer",
+            "description": "应用类型",
+            "format": "enum"
+          },
+          "namespace_id": {
+            "type": "string",
+            "description": "命名空间id"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "应用负责人"
+          },
+          "repos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "应用仓库"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "创建时间"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "修改时间"
+          }
+        }
+      },
+      "api.console.resource.AppInfo_AppPort": {
+        "type": "object",
+        "properties": {
+          "port": {
+            "type": "integer",
+            "description": "端口 0代表随机端口",
+            "format": "uint32"
+          },
+          "protocol": {
+            "type": "integer",
+            "description": "协议",
+            "format": "enum"
+          },
+          "remark": {
+            "type": "string",
+            "description": "备注"
+          }
+        },
+        "description": "应用端口描述"
+      },
+      "api.console.resource.AppListReply": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/protobuf.Pagination"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.resource.AppInfo"
+            }
+          }
+        }
+      },
+      "api.console.resource.AppUpdateReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/api.console.resource.AppInfo"
+          }
+        }
+      },
+      "api.console.resource.AppUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.resource.CreateNodeReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/api.console.resource.NodeInfo"
+          }
+        }
+      },
+      "api.console.resource.CreateNodeRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "节点名称"
+          },
+          "ip": {
+            "type": "string",
+            "description": "节点IP"
+          },
+          "auto_detect": {
+            "type": "boolean",
+            "description": "Agent自动上报开关"
+          },
+          "zone_id": {
+            "type": "integer",
+            "description": "可用区ID",
+            "format": "int32"
+          },
+          "env": {
+            "type": "string",
+            "description": "环境变量"
+          }
+        }
+      },
+      "api.console.resource.CreateZoneReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/api.console.resource.ZoneInfo"
+              }
+            ],
+            "description": "可用区"
+          }
+        }
+      },
+      "api.console.resource.CreateZoneRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "可用区名称"
+          },
+          "code": {
+            "type": "string",
+            "description": "可用区代码"
+          },
+          "region_name": {
+            "type": "string",
+            "description": "地区名称"
+          },
+          "region_code": {
+            "type": "string",
+            "description": "地区代码"
+          },
+          "env": {
+            "type": "string",
+            "description": "环境"
+          }
+        }
+      },
+      "api.console.resource.DeleteZoneReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.resource.DisableZoneReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.resource.DisableZoneRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "可用区ID",
+            "format": "int32"
+          },
+          "remark": {
+            "type": "string",
+            "description": "备注"
+          }
+        }
+      },
+      "api.console.resource.GetZoneListReply": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/protobuf.Pagination"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.resource.ZoneInfo"
+            },
+            "description": "可用区列表"
+          }
+        }
+      },
+      "api.console.resource.GetZoneReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/api.console.resource.ZoneInfo"
+              }
+            ],
+            "description": "可用区"
+          }
+        }
+      },
+      "api.console.resource.NamespaceApp": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "type": {
+            "type": "integer",
+            "format": "enum"
+          },
+          "namespace_id": {
+            "type": "string"
+          },
+          "namespace_name": {
+            "type": "string"
+          },
+          "namespace_alias": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.resource.NamespaceAppListReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.resource.NamespaceApp"
+            }
+          }
+        }
+      },
+      "api.console.resource.NamespaceCreateReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/api.console.resource.NamespaceInfo"
+          }
+        }
+      },
+      "api.console.resource.NamespaceCreateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.resource.NamespaceDeleteReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.resource.NamespaceGetReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/api.console.resource.NamespaceInfo"
+          }
+        }
+      },
+      "api.console.resource.NamespaceInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "running": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "api.console.resource.NamespaceListReply": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/protobuf.Pagination"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.resource.NamespaceInfo"
+            }
+          }
+        }
+      },
+      "api.console.resource.NamespaceSimple": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.resource.NamespaceSimpleListReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.resource.NamespaceSimple"
+            }
+          }
+        }
+      },
+      "api.console.resource.NamespaceUpdateReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/api.console.resource.NamespaceInfo"
+          }
+        }
+      },
+      "api.console.resource.NamespaceUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.resource.NodeInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "节点ID",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "description": "节点名称"
+          },
+          "ip": {
+            "type": "string",
+            "description": "节点IP"
+          },
+          "agent": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/api.console.resource.Agent"
+              }
+            ],
+            "description": "Agent状态"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "节点创建时间"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "节点更新时间"
+          },
+          "zone_id": {
+            "type": "integer",
+            "description": "可用区ID",
+            "format": "int32"
+          },
+          "zone_code": {
+            "type": "string",
+            "description": "可用区编码"
+          },
+          "zone_name": {
+            "type": "string",
+            "description": "可用区名称"
+          },
+          "region_code": {
+            "type": "string",
+            "description": "地区"
+          },
+          "region_name": {
+            "type": "string",
+            "description": "地区名称"
+          },
+          "env": {
+            "type": "string",
+            "description": "环境变量"
+          },
+          "auto_detect": {
+            "type": "boolean",
+            "description": "自动上报信息"
+          }
+        }
+      },
+      "api.console.resource.NodeListReply": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/protobuf.Pagination"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.resource.NodeInfo"
+            }
+          }
+        }
+      },
+      "api.console.resource.SimpleListReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.resource.SimpleZoneInfo"
+            }
+          }
+        }
+      },
+      "api.console.resource.SimpleZoneInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "可用区ID",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "description": "可用区名称"
+          },
+          "code": {
+            "type": "string",
+            "description": "可用区代码"
+          }
+        },
+        "description": "简单的可用区信息(主要用来枚举展示)"
+      },
+      "api.console.resource.UpdateNodeReply": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/api.console.resource.NodeInfo"
+          }
+        }
+      },
+      "api.console.resource.UpdateNodeRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "节点名称"
+          },
+          "ip": {
+            "type": "string",
+            "description": "节点IP"
+          },
+          "auto_detect": {
+            "type": "boolean",
+            "description": "Agent自动上报开关"
+          },
+          "zone_id": {
+            "type": "integer",
+            "description": "可用区ID",
+            "format": "int32"
+          },
+          "env": {
+            "type": "string",
+            "description": "环境变量"
+          },
+          "id": {
+            "type": "integer",
+            "description": "节点ID",
+            "format": "int32"
+          }
+        }
+      },
+      "api.console.resource.UpdateZoneReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.resource.UpdateZoneRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "description": "可用区名称"
+          },
+          "code": {
+            "type": "string",
+            "description": "可用区代码"
+          },
+          "region_name": {
+            "type": "string",
+            "description": "地区名称"
+          },
+          "region_code": {
+            "type": "string",
+            "description": "地区代码"
+          },
+          "env": {
+            "type": "string",
+            "description": "环境"
+          }
+        }
+      },
+      "api.console.resource.ZoneInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "可用区ID",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "description": "可用区名称"
+          },
+          "code": {
+            "type": "string",
+            "description": "可用区代码"
+          },
+          "region_name": {
+            "type": "string",
+            "description": "地区名称"
+          },
+          "region_code": {
+            "type": "string",
+            "description": "地区代码"
+          },
+          "env": {
+            "type": "string",
+            "description": "环境"
+          },
+          "status": {
+            "type": "integer",
+            "description": "状态",
+            "format": "enum"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "创建时间"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "更新时间"
+          }
+        },
+        "description": "可用区"
+      },
+      "protobuf.Pagination": {
+        "type": "object",
+        "properties": {
+          "current": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page_size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "raw_total": {
+            "type": "string"
+          }
+        },
+        "description": "通用的分页信息"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "App"
+    },
+    {
+      "name": "Discovery"
+    },
+    {
+      "name": "Namespace"
+    },
+    {
+      "name": "Node",
+      "description": "节点服务\n\n 节点服务提供可用部署节点相关的接口"
+    },
+    {
+      "name": "Permission"
+    },
+    {
+      "name": "Role"
+    },
+    {
+      "name": "User"
+    },
+    {
+      "name": "Zone",
+      "description": "ZoneService is the resource `data-center` definition.\n\n version: v1"
+    }
+  ]
+}

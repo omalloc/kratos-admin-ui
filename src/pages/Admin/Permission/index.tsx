@@ -1,6 +1,7 @@
 import * as permissionService from '@/services/console/Permission';
 import { mergeData } from '@/utils/pagination';
 import {
+  ActionType,
   ModalForm,
   PageContainer,
   ProFormCheckbox,
@@ -11,8 +12,8 @@ import {
   ProTable,
   type ProColumns,
 } from '@ant-design/pro-components';
-import { Button, Collapse, Divider, Tag } from 'antd';
-import { useState } from 'react';
+import { App, Button, Collapse, Divider, Form, Tag } from 'antd';
+import { useRef, useState } from 'react';
 
 const defActions: API.Action[] = [
   {
@@ -51,22 +52,24 @@ const statusMapLabels: Record<number, string> = {
 const PermissionPage: React.FC = () => {
   const [editing, setEditing] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const [formData, setFormData] = useState<API.PermissionInfo | undefined>();
+  const [form] = Form.useForm<API.PermissionInfo>();
+  const ref = useRef<ActionType>();
+
+  const { message } = App.useApp();
 
   const handleAdd = () => {
     setEditing(false);
     setVisible(true);
-    setFormData(undefined);
+    form.resetFields();
   };
   const handleEdit = (record: API.PermissionInfo) => {
     setEditing(true);
     setVisible(true);
-    setFormData(record);
+    form.setFieldsValue({ ...record });
   };
   const handleCancel = () => {
     setVisible(false);
     setEditing(false);
-    setFormData(undefined);
   };
   const columns: ProColumns<API.PermissionInfo>[] = [
     {
@@ -119,6 +122,7 @@ const PermissionPage: React.FC = () => {
   return (
     <PageContainer>
       <ProTable<API.PermissionInfo>
+        actionRef={ref}
         columns={columns}
         request={async (params) => {
           const res = await permissionService.PermissionListPermission(
@@ -138,17 +142,12 @@ const PermissionPage: React.FC = () => {
       />
 
       <ModalForm
-        title={editing ? '编辑权限' : '新增权限'}
+        title={editing ? `编辑权限` : '新增权限'}
         open={visible}
+        form={form}
         modalProps={{
           destroyOnClose: true,
           onCancel: handleCancel,
-        }}
-        request={async () => {
-          return {
-            ...formData,
-            actions: formData?.actions || [...defActions],
-          };
         }}
         onFinish={async (payload) => {
           console.log('form payload', payload);
@@ -158,24 +157,57 @@ const PermissionPage: React.FC = () => {
                 { id: payload.id || '' },
                 payload,
               );
+              message.success('编辑成功');
             } else {
               await permissionService.PermissionCreatePermission(payload);
+              message.success('新增成功');
             }
+
+            ref.current?.reload();
+            handleCancel();
           } catch (error) {
             console.error(error);
+            message.error('操作失败');
           }
         }}
       >
         <ProFormText name="id" hidden />
         <ProFormGroup>
-          <ProFormText name="name" label="权限名称" colProps={{ span: 12 }} />
-          <ProFormText name="alias" label="权限别名" colProps={{ span: 12 }} />
+          <ProFormText
+            name="name"
+            label="权限名称"
+            colProps={{ span: 12 }}
+            required
+            rules={[{ required: true, message: '请输入权限名称' }]}
+          />
+          <ProFormText
+            name="alias"
+            label="权限别名"
+            colProps={{ span: 12 }}
+            required
+            rules={[{ required: true, message: '请输入权限别名' }]}
+          />
         </ProFormGroup>
         <ProFormTextArea name="describe" label="描述" />
         <Divider />
         <Collapse bordered={false} defaultActiveKey={editing ? ['1'] : []}>
-          <Collapse.Panel key="1" header="附加项">
-            <ProFormList name="actions" label="授权动作">
+          <Collapse.Panel key="1" header="附加项" forceRender>
+            <ProFormList
+              name="actions"
+              label={
+                <span>
+                  授权动作
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      form.setFieldValue('actions', [...defActions]);
+                    }}
+                  >
+                    填充默认
+                  </Button>
+                </span>
+              }
+            >
               <ProFormGroup>
                 <ProFormText name="key" label="动作" width={120} />
                 <ProFormText name="describe" label="描述" width={150} />

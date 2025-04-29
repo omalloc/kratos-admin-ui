@@ -3,7 +3,7 @@
 import { request } from '@umijs/max';
 
 /** 此处后端没有提供注释 GET /api/console/permission */
-export async function PermissionListPermission(
+export async function permissionListPermission(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.PermissionListPermissionParams,
   options?: { [key: string]: any },
@@ -18,7 +18,7 @@ export async function PermissionListPermission(
 }
 
 /** 此处后端没有提供注释 POST /api/console/permission */
-export async function PermissionCreatePermission(
+export async function permissionCreatePermission(
   body: API.CreatePermissionRequest,
   options?: { [key: string]: any },
 ) {
@@ -32,8 +32,20 @@ export async function PermissionCreatePermission(
   });
 }
 
+/** 此处后端没有提供注释 GET /api/console/permission-scoped */
+export async function permissionListAllPermission(
+  options?: {
+    [key: string]: any;
+  },
+) {
+  return request<API.ListAllPermissionReply>('/api/console/permission-scoped', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 GET /api/console/permission/${param0} */
-export async function PermissionGetPermission(
+export async function permissionGetPermission(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.PermissionGetPermissionParams,
   options?: { [key: string]: any },
@@ -47,34 +59,40 @@ export async function PermissionGetPermission(
 }
 
 /** 此处后端没有提供注释 PUT /api/console/permission/${param0} */
-export async function PermissionUpdatePermission(
+export async function permissionUpdatePermission(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.PermissionUpdatePermissionParams,
   body: API.UpdatePermissionRequest,
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.UpdatePermissionReply>(`/api/console/permission/${param0}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
+  return request<API.UpdatePermissionReply>(
+    `/api/console/permission/${param0}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      params: { ...queryParams },
+      data: body,
+      ...(options || {}),
     },
-    params: { ...queryParams },
-    data: body,
-    ...(options || {}),
-  });
+  );
 }
 
 /** 此处后端没有提供注释 DELETE /api/console/permission/${param0} */
-export async function PermissionDeletePermission(
+export async function permissionDeletePermission(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.PermissionDeletePermissionParams,
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.DeletePermissionReply>(`/api/console/permission/${param0}`, {
-    method: 'DELETE',
-    params: { ...queryParams },
-    ...(options || {}),
-  });
+  return request<API.DeletePermissionReply>(
+    `/api/console/permission/${param0}`,
+    {
+      method: 'DELETE',
+      params: { ...queryParams },
+      ...(options || {}),
+    },
+  );
 }

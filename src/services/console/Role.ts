@@ -3,7 +3,7 @@
 import { request } from '@umijs/max';
 
 /** 此处后端没有提供注释 GET /api/console/role */
-export async function RoleListRole(
+export async function roleListRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.RoleListRoleParams,
   options?: { [key: string]: any },
@@ -18,7 +18,7 @@ export async function RoleListRole(
 }
 
 /** 此处后端没有提供注释 POST /api/console/role */
-export async function RoleCreateRole(
+export async function roleCreateRole(
   body: API.CreateRoleRequest,
   options?: { [key: string]: any },
 ) {
@@ -33,7 +33,7 @@ export async function RoleCreateRole(
 }
 
 /** 此处后端没有提供注释 GET /api/console/role/${param0} */
-export async function RoleGetRole(
+export async function roleGetRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.RoleGetRoleParams,
   options?: { [key: string]: any },
@@ -47,7 +47,7 @@ export async function RoleGetRole(
 }
 
 /** 此处后端没有提供注释 PUT /api/console/role/${param0} */
-export async function RoleUpdateRole(
+export async function roleUpdateRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.RoleUpdateRoleParams,
   body: API.UpdateRoleRequest,
@@ -66,7 +66,7 @@ export async function RoleUpdateRole(
 }
 
 /** 此处后端没有提供注释 DELETE /api/console/role/${param0} */
-export async function RoleDeleteRole(
+export async function roleDeleteRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.RoleDeleteRoleParams,
   options?: { [key: string]: any },
@@ -80,39 +80,45 @@ export async function RoleDeleteRole(
 }
 
 /** 此处后端没有提供注释 PUT /api/console/role/${param0}/permission */
-export async function RoleBindPermission(
+export async function roleBindPermission(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.RoleBindPermissionParams,
   body: API.BindPermissionRequest,
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.BindPermissionReply>(`/api/console/role/${param0}/permission`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
+  return request<API.BindPermissionReply>(
+    `/api/console/role/${param0}/permission`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      params: { ...queryParams },
+      data: body,
+      ...(options || {}),
     },
-    params: { ...queryParams },
-    data: body,
-    ...(options || {}),
-  });
+  );
 }
 
 /** 此处后端没有提供注释 PUT /api/console/role/${param0}/permission/${param1} */
-export async function RoleUnbindPermission(
+export async function roleUnbindPermission(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.RoleUnbindPermissionParams,
   body: API.UnbindPermissionRequest,
   options?: { [key: string]: any },
 ) {
   const { id: param0, permission_id: param1, ...queryParams } = params;
-  return request<API.UnbindPermissionReply>(`/api/console/role/${param0}/permission/${param1}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
+  return request<API.UnbindPermissionReply>(
+    `/api/console/role/${param0}/permission/${param1}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      params: { ...queryParams },
+      data: body,
+      ...(options || {}),
     },
-    params: { ...queryParams },
-    data: body,
-    ...(options || {}),
-  });
+  );
 }

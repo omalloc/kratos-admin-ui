@@ -13,7 +13,7 @@ import {
   type ProColumns,
 } from '@ant-design/pro-components';
 import { useRequest } from '@umijs/max';
-import { Button, Col, Empty, Row, Tag, type FormInstance } from 'antd';
+import { App, Button, Col, Empty, Row, Tag, type FormInstance } from 'antd';
 import { useMemo, useRef, useState } from 'react';
 
 interface DataAccess {
@@ -50,16 +50,29 @@ const expandedRowRender = (record: Required<API.RoleInfo>) => {
 const RolePage: React.FC = () => {
   const [currentId, setCurrentId] = useState<string>();
   const [visible, setVisible] = useState(false);
+  const [editing, setEditing] = useState<boolean>(false);
   const [authorizeVisible, setAuthorizeVisible] = useState(false);
   const actionRef = useRef();
   const formRef = useRef<FormInstance<API.RoleInfo>>();
   const authorizeRef = useRef<FormInstance<API.RoleInfo>>();
+  const [checkedMap, setCheckedMap] = useState<
+    Record<
+      string,
+      {
+        item: API.PermissionInfo;
+        actions: Record<string, API.Action>;
+      }
+    >
+  >({});
+
+  const { message } = App.useApp();
 
   const { data: permissionList = [] } = useRequest(
     () => permissionService.permissionListAllPermission(),
     {
-      onSuccess: (res) => {
+      onSuccess: (res: API.PermissionInfo[]) => {
         console.log('permissionList', res);
+        setCheckedMap({});
       },
     },
   );
@@ -75,7 +88,7 @@ const RolePage: React.FC = () => {
   };
   const handleEdit = (record: API.RoleInfo) => {
     setVisible(true);
-
+    setEditing(true);
     formRef.current?.setFieldsValue({ ...record });
   };
   const handleAuthorize = (record: API.RoleInfo) => {
@@ -92,10 +105,10 @@ const RolePage: React.FC = () => {
   };
 
   const columns: ProColumns<API.RoleInfo>[] = [
-    { dataIndex: 'name', title: '角色名称', width: 200 },
+    { dataIndex: 'name', title: '角色标识', width: 200 },
     {
-      dataIndex: 'describe',
-      title: '描述',
+      dataIndex: 'alias',
+      title: '角色名称',
       ellipsis: true,
       hideInSearch: true,
     },
@@ -142,8 +155,26 @@ const RolePage: React.FC = () => {
       <ModalForm
         formRef={formRef}
         open={visible}
-        onFinish={async (values) => {
-          console.log('values', values);
+        onFinish={async (payload) => {
+          console.log('values', payload);
+          try {
+            if (editing) {
+              await roleService.roleUpdateRole(
+                { id: payload.id || '' },
+                payload,
+              );
+              message.success('编辑成功');
+            } else {
+              await roleService.roleCreateRole(payload);
+              message.success('新增成功');
+            }
+
+            actionRef.current?.reload();
+            handleCancel();
+          } catch (error) {
+            console.error(error);
+            message.error('操作失败');
+          }
         }}
         modalProps={{
           destroyOnClose: false,
@@ -156,7 +187,7 @@ const RolePage: React.FC = () => {
             name="name"
             label="角色标识"
             help="角色标识是唯一的，不能重复"
-            rules={[{ required: true, message: '请输入角色名称' }]}
+            rules={[{ required: true, message: '请输入角色标识' }]}
           />
           <ProFormText
             name="alias"
@@ -177,6 +208,34 @@ const RolePage: React.FC = () => {
         open={authorizeVisible}
         onFinish={async (values) => {
           console.log('values', values);
+          console.log('checkedMap', checkedMap);
+
+          try {
+            // 将 checkedMap 转换为后端需要的格式
+            const data = Object.entries(checkedMap).map(([itemId, data]) => ({
+              permission_id: itemId,
+              actions: Object.entries(data.actions)
+                .filter(([_, action]) => action.checked)
+                .map(([_, action]) => action),
+              data_access: [], // 暂时为空数组
+            }));
+
+            // 调用 roleBindPermission
+            await roleService.roleBindPermission(
+              { id: values.id },
+              {
+                id: values.id,
+                data,
+              },
+            );
+
+            message.success('授权成功');
+            setAuthorizeVisible(false);
+            actionRef.current?.reload();
+          } catch (error) {
+            console.error(error);
+            message.error('授权失败');
+          }
         }}
         params={{
           currentId,
@@ -188,6 +247,39 @@ const RolePage: React.FC = () => {
           } as any);
           console.log('res', res);
 
+          // 初始化 checkedMap
+          const initialCheckedMap: Record<
+            string,
+            {
+              item: API.PermissionInfo;
+              actions: Record<string, API.Action>;
+            }
+          > = {};
+
+          // 遍历权限列表，设置初始选中状态
+          permissionList.forEach((perm: API.PermissionInfo) => {
+            const existingPermission = res.permissions?.find(
+              (p) => p.perm_id === perm.id,
+            );
+            if (existingPermission) {
+              initialCheckedMap[perm.id] = {
+                item: perm,
+                actions: {},
+              };
+              // 设置已选中的 actions
+              existingPermission.actions?.forEach((action) => {
+                if (action.key) {
+                  initialCheckedMap[perm.id].actions[action.key] = {
+                    ...action,
+                    checked: true,
+                  };
+                }
+              });
+            }
+          });
+
+          setCheckedMap(initialCheckedMap);
+
           return {
             ...res,
           };
@@ -196,6 +288,7 @@ const RolePage: React.FC = () => {
           destroyOnClose: false,
           onCancel: () => {
             setAuthorizeVisible(false);
+            setCheckedMap({});
           },
         }}
       >
@@ -203,7 +296,6 @@ const RolePage: React.FC = () => {
         <ProFormFieldSet name="permissions" label="授权模块" type="group">
           {(meta, index) => {
             console.log('meta', meta, 'index', index);
-
             const currentMap = meta.reduce(
               (kv, item) => {
                 kv[item.id] = item;
@@ -212,21 +304,44 @@ const RolePage: React.FC = () => {
               {} as Record<string, API.RolePermission>,
             );
 
+            const handleChange = (item, action, checked) => {
+              const newCheckedMap = { ...checkedMap };
+
+              if (checked) {
+                // 如果选中，添加到 checkedMap
+                if (!newCheckedMap[item.id]) {
+                  newCheckedMap[item.id] = {
+                    item,
+                    actions: {},
+                  };
+                }
+                newCheckedMap[item.id].actions[action.key] = {
+                  ...action,
+                  checked: true,
+                };
+              } else {
+                // 如果取消选中，将 checked 设置为 false
+                if (newCheckedMap[item.id]) {
+                  newCheckedMap[item.id].actions[action.key] = {
+                    ...action,
+                    checked: false,
+                  };
+                }
+              }
+
+              setCheckedMap(newCheckedMap);
+              console.log('checkedMap after update:', newCheckedMap);
+            };
+
             return (
               <Row gutter={24}>
                 {permissionList.map((item) => {
-                  const perm = currentMap[item.id || 0];
+                  const perm = checkedMap[item.id];
                   const checkedAll =
-                    perm?.actions.length === item.actions?.length;
-                  const actionKeyMap =
-                    perm?.actions.reduce(
-                      (kv, item: any) => {
-                        kv[item.key] = item;
-                        return kv;
-                      },
-                      {} as Record<string, any>,
-                    ) || {};
-                  console.log('actionKeyMap', actionKeyMap);
+                    perm?.actions &&
+                    item.actions?.every(
+                      (action) => perm.actions[action.key]?.checked === true,
+                    );
 
                   return (
                     <Col key={item.id} span={24} style={{ marginBottom: 12 }}>
@@ -235,24 +350,41 @@ const RolePage: React.FC = () => {
                           {item.name}:
                         </Col>
                         <Col span={20}>
-                          <Tag.CheckableTag key="all" checked={checkedAll}>
+                          <Tag.CheckableTag
+                            key="all"
+                            checked={checkedAll}
+                            onChange={(checked) => {
+                              // 全选/取消全选
+                              const newCheckedMap = { ...checkedMap };
+                              if (!newCheckedMap[item.id]) {
+                                newCheckedMap[item.id] = {
+                                  item,
+                                  actions: {},
+                                };
+                              }
+                              // 更新所有 action 的 checked 状态
+                              item.actions?.forEach((action) => {
+                                newCheckedMap[item.id].actions[action.key] = {
+                                  ...action,
+                                  checked,
+                                };
+                              });
+                              setCheckedMap(newCheckedMap);
+                            }}
+                          >
                             全选
                           </Tag.CheckableTag>
-                          {item.actions!.map((action, idx) => {
+                          {item.actions!.map((action) => {
+                            const isChecked =
+                              checkedMap[item.id]?.actions?.[action.key]
+                                ?.checked;
                             return (
                               <Tag.CheckableTag
                                 key={action.key}
-                                checked={!!actionKeyMap[action.key || '']}
-                                onChange={(checked) => {
-                                  console.log(
-                                    item.id,
-                                    action.key,
-                                    'checked',
-                                    checked,
-                                  );
-
-                                  perm?.actions[idx].checked = checked;
-                                }}
+                                checked={isChecked}
+                                onChange={(checked) =>
+                                  handleChange(item, action, checked)
+                                }
                               >
                                 {action.describe}
                               </Tag.CheckableTag>
@@ -265,7 +397,6 @@ const RolePage: React.FC = () => {
                 })}
               </Row>
             );
-            // return <div>123</div>;
           }}
         </ProFormFieldSet>
       </ModalForm>

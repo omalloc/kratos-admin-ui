@@ -122,3 +122,13 @@ export async function roleUnbindPermission(
     },
   );
 }
+
+/** 此处后端没有提供注释 PUT /api/console/role/${param0}/permission/${param1} */
+export async function getAllRole() {
+  return request<API.ListRoleReply>(`/api/console/role-all`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+}

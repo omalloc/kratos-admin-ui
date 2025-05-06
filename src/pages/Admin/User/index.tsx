@@ -1,4 +1,8 @@
+import * as roleService from '@/services/console/Role';
+import * as userService from '@/services/console/User';
+import { mergeData } from '@/utils/pagination';
 import {
+  ActionType,
   ModalForm,
   PageContainer,
   ProFormGroup,
@@ -8,24 +12,19 @@ import {
   ProTable,
   type ProColumns,
 } from '@ant-design/pro-components';
-import { App, Badge, Divider, Space, Tooltip, Typography } from 'antd';
-import { useState } from 'react';
-
-type UserNamespace = {
-  name: string;
-  describe: string;
-  pflag: 'r' | 'rw';
-};
+import { useRequest } from '@umijs/max';
+import { App, Badge, Button, Divider, Space, Tooltip, Typography } from 'antd';
+import { useRef, useState } from 'react';
 
 type User = {
   id: string;
   username: string;
-  password: string;
+  password?: string;
   nickname: string;
   email: string;
-  role?: { name: string; describe: string };
-  namespace?: UserNamespace[];
-  disabled: boolean;
+  avatar: string;
+  status: number;
+  role_ids: string[];
   created_at: string;
   updated_at: string;
 };
@@ -34,11 +33,15 @@ const UserModal: React.FC<{
   open: boolean;
   onCancel?: () => void;
   onOk?: () => void;
-}> = ({ open, onCancel, onOk }) => {
+  editing?: boolean;
+  initialValues?: Partial<User>;
+}> = ({ open, onCancel, onOk, editing = false, initialValues }) => {
+  const { data: roleList = [] } = useRequest(() => roleService.getAllRole());
+
   return (
     <ModalForm<User>
       open={open}
-      title="用户配置"
+      title={editing ? '编辑用户' : '新建用户'}
       width={600}
       grid={true}
       rowProps={{
@@ -47,6 +50,24 @@ const UserModal: React.FC<{
       modalProps={{
         destroyOnClose: true,
         onCancel,
+      }}
+      initialValues={initialValues}
+      onFinish={async (values) => {
+        try {
+          if (editing && values.id) {
+            await userService.userUpdateUser(
+              { id: values.id },
+              values as API.UpdateUserRequest,
+            );
+          } else {
+            await userService.userCreateUser(values as API.CreateUserRequest);
+          }
+          onOk?.();
+          return true;
+        } catch (error) {
+          console.error(error);
+          return false;
+        }
       }}
     >
       <ProFormText name="id" hidden />
@@ -64,49 +85,38 @@ const UserModal: React.FC<{
         />
       </ProFormGroup>
       <ProFormText name="email" label="电子邮箱" rules={[{ required: true }]} />
-      <ProFormGroup>
-        <ProFormText.Password
-          name="password"
-          label="密码"
-          rules={[{ required: true }]}
-        />
-        <ProFormText.Password
-          name="re_password"
-          label="确认密码"
-          rules={[{ required: true }]}
-        />
-      </ProFormGroup>
+      {!editing && (
+        <ProFormGroup>
+          <ProFormText.Password
+            name="password"
+            label="密码"
+            rules={[{ required: true }]}
+          />
+          <ProFormText.Password
+            name="re_password"
+            label="确认密码"
+            rules={[{ required: true }]}
+          />
+        </ProFormGroup>
+      )}
       <ProFormRadio.Group
         name="status"
         label="状态"
-        disabled={true}
         options={[
-          { label: '启用', value: 1 },
-          { label: '禁用', value: 2 },
+          { label: '启用', value: 0 },
+          { label: '禁用', value: 1 },
         ]}
       />
       <Divider />
       <ProFormGroup>
         <ProFormSelect
-          name="role"
+          name="role_ids"
           label="角色"
           mode="multiple"
-          options={[
-            { label: '管理员', value: '1' },
-            { label: '某角色1', value: '2' },
-            { label: '某角色2', value: '3' },
-          ]}
-        />
-        <ProFormSelect
-          name="namespace"
-          label="授权命名空间"
-          mode="multiple"
-          options={[
-            { label: '默认命名空间', value: '1' },
-            { label: 'BLB命名空间', value: '2' },
-            { label: '某命名空间1', value: '3' },
-            { label: '某命名空间2', value: '4' },
-          ]}
+          options={roleList.map((role) => ({
+            label: role.alias,
+            value: role.id,
+          }))}
         />
       </ProFormGroup>
     </ModalForm>
@@ -116,9 +126,43 @@ const UserModal: React.FC<{
 const UserPage: React.FC = () => {
   const { message } = App.useApp();
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [currentUser, setCurrentUser] = useState<Partial<User>>();
+  const actionRef = useRef<ActionType>();
+  const { data: roleList = [] } = useRequest(() => roleService.getAllRole());
 
-  const handleUpdateStatus = (id: string, disabled: boolean) => {
-    message.info(`用户状态 -> ${disabled ? '禁用' : '正常'}`);
+  const handleAdd = () => {
+    setEditing(false);
+    setCurrentUser(undefined);
+    setOpen(true);
+  };
+
+  const handleEdit = (record: User) => {
+    setEditing(true);
+    setCurrentUser(record);
+    setOpen(true);
+  };
+
+  const handleUpdateStatus = async (id: string, status: number) => {
+    try {
+      await userService.userUpdateUser({ id }, {
+        status,
+      } as API.UpdateUserRequest);
+      message.success('状态更新成功');
+      actionRef.current?.reload();
+    } catch (error) {
+      message.error('状态更新失败');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await userService.userDeleteUser({ id });
+      message.success('删除成功');
+      actionRef.current?.reload();
+    } catch (error) {
+      message.error('删除失败');
+    }
   };
 
   const columns: ProColumns<User>[] = [
@@ -142,28 +186,27 @@ const UserPage: React.FC = () => {
       ),
     },
     {
-      key: 'describe',
-      title: '可访问资源及命名空间',
+      key: 'roles',
+      title: '角色',
       hideInSearch: true,
-      render: (_, { role, namespace }) => {
-        return (
-          <Space direction="vertical">
-            <span>{role?.describe}</span>
-            <Typography.Text type="secondary">
-              {namespace?.map((item) => item.name).join(',')}
-            </Typography.Text>
-          </Space>
-        );
+      render: (_, record) => {
+        const roles = record.role_ids
+          .map((roleId) => {
+            const role = roleList.find((r) => String(r.id) === String(roleId));
+            return role?.alias || '';
+          })
+          .filter(Boolean);
+        return roles.join(', ') || '-';
       },
     },
     {
       key: 'status',
       title: '状态',
       width: 120,
-      render: (_, { disabled = false }) => (
+      render: (_, { status = 0 }) => (
         <Badge
-          status={disabled ? 'error' : 'processing'}
-          text={disabled ? '禁止登录' : '正常'}
+          status={status === 0 ? 'processing' : 'error'}
+          text={status === 0 ? '正常' : '禁止登录'}
         />
       ),
     },
@@ -171,54 +214,69 @@ const UserPage: React.FC = () => {
       key: 'option',
       title: '操作',
       valueType: 'option',
-      width: 120,
+      width: 180,
       render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setOpen(true);
-          }}
-        >
+        <a key="edit" onClick={() => handleEdit(record)}>
           编辑
         </a>,
         <Divider key="split_1" type="vertical" />,
         <a
           key="disabled"
-          onClick={() => handleUpdateStatus(record.id, !record.disabled)}
+          onClick={() =>
+            handleUpdateStatus(record.id, record.status === 0 ? 1 : 0)
+          }
         >
-          禁用
+          {record.status === 0 ? '禁用' : '启用'}
+        </a>,
+        <Divider key="split_2" type="vertical" />,
+        <a key="delete" onClick={() => handleDelete(record.id)}>
+          删除
         </a>,
       ],
     },
   ];
+
   return (
     <PageContainer>
       <ProTable<User>
-        columns={columns}
-        dataSource={[
-          {
-            id: '1',
-            username: 'admin',
-            password: 'admin',
-            nickname: '我是管理员',
-            email: 'admin@localhost',
-            role: { name: 'admin', describe: '管理员' },
-            namespace: [
-              { name: 'default', describe: '默认命名空间', pflag: 'rw' },
-            ],
-            disabled: false,
-            created_at: '2021-01-01 00:00:00',
-            updated_at: '2021-01-01 00:00:00',
-          },
+        actionRef={actionRef}
+        rowKey="id"
+        search={{
+          labelWidth: 120,
+        }}
+        toolBarRender={() => [
+          <Button key="add" type="primary" onClick={handleAdd}>
+            新建
+          </Button>,
         ]}
+        request={async (params, sorter, filter) => {
+          const res = await userService.userListUser(mergeData(params));
+          return {
+            data: res.data?.map((user) => ({
+              ...user,
+              role_ids: user.role_ids?.map((id) => String(id)) || [],
+            })) as User[],
+            total: res.pagination?.total,
+            success: true,
+          };
+        }}
+        columns={columns}
       />
 
       <UserModal
         open={open}
-        onCancel={() => setOpen(false)}
-        onOk={() => {
-          // reload and close modal
+        editing={editing}
+        initialValues={currentUser}
+        onCancel={() => {
           setOpen(false);
+          setEditing(false);
+          setCurrentUser(undefined);
+        }}
+        onOk={() => {
+          setOpen(false);
+          setEditing(false);
+          setCurrentUser(undefined);
+          actionRef.current?.reload();
         }}
       />
     </PageContainer>

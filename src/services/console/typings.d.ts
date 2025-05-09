@@ -5,13 +5,17 @@ declare namespace API {
     checked?: boolean;
   };
 
+  type BindPermissionBodyRequest = {
+    permission_id?: string;
+    actions?: Action[];
+    data_access?: Action[];
+  };
+
   type BindPermissionReply = {};
 
   type BindPermissionRequest = {
     id?: string;
-    permission_id?: string;
-    actions?: Action[];
-    data_access?: Action[];
+    data?: BindPermissionBodyRequest[];
   };
 
   type BindRoleReply = {};
@@ -37,6 +41,7 @@ declare namespace API {
     name?: string;
     describe?: string;
     status?: number;
+    alias?: string;
   };
 
   type CreateUserReply = {
@@ -45,13 +50,15 @@ declare namespace API {
 
   type CreateUserRequest = {
     username?: string;
+    nickname?: string;
+    email?: string;
     password?: string;
     re_password?: string;
-    email?: string;
-    nickname?: string;
-    role_id?: string;
-    omit_perm?: string[];
+    disabled?: boolean;
+    role_ids?: string[];
   };
+
+  type CurrentUserReply = {};
 
   type DeletePermissionReply = {};
 
@@ -59,7 +66,12 @@ declare namespace API {
 
   type DeleteUserReply = {};
 
+  type GetAllReply = {
+    data?: RoleInfo[];
+  };
+
   type GetPermissionReply = {
+    id?: string;
     name?: string;
     alias?: string;
     describe?: string;
@@ -102,11 +114,25 @@ declare namespace API {
     data?: UserInfo[];
   };
 
+  type LoginReply = {};
+
+  type LoginRequest = {
+    /** 用户名 */
+    username?: string;
+    /** 密码 */
+    password?: string;
+    /** 自动登录 */
+    auto_login?: boolean;
+  };
+
+  type LogoutReply = {};
+
+  type LogoutRequest = {};
+
   type Pagination = {
-    current?: number;
+    page?: number;
     page_size?: number;
     total?: number;
-    raw_total?: string;
   };
 
   type PermissionDeletePermissionParams = {
@@ -127,10 +153,9 @@ declare namespace API {
   };
 
   type PermissionListPermissionParams = {
-    'pagination.current'?: number;
+    'pagination.page'?: number;
     'pagination.page_size'?: number;
     'pagination.total'?: number;
-    'pagination.raw_total'?: string;
     name?: string;
     alias?: string;
     status?: number;
@@ -139,6 +164,14 @@ declare namespace API {
   type PermissionUpdatePermissionParams = {
     id: string;
   };
+
+  type RegisterReply = {};
+
+  type RegisterRequest = {};
+
+  type ResetPasswordReply = {};
+
+  type ResetPasswordRequest = {};
 
   type RoleBindPermissionParams = {
     id: string;
@@ -162,18 +195,24 @@ declare namespace API {
   };
 
   type RoleListRoleParams = {
-    'pagination.current'?: number;
+    'pagination.page'?: number;
     'pagination.page_size'?: number;
     'pagination.total'?: number;
-    'pagination.raw_total'?: string;
   };
 
   type RolePermission = {
+    /** 业务id */
     id?: string;
+    /** 角色id */
     role_id?: string;
+    /** 权限id */
     perm_id?: string;
+    /** 操作权限 */
     actions?: Action[];
+    /** 数据权限 */
     data_access?: Action[];
+    /** 绑定权限时间 */
+    created_at?: string;
   };
 
   type RoleUnbindPermissionParams = {
@@ -184,6 +223,10 @@ declare namespace API {
   type RoleUpdateRoleParams = {
     id: string;
   };
+
+  type SendCaptchaReply = {};
+
+  type SendCaptchaRequest = {};
 
   type UnbindPermissionReply = {};
 
@@ -212,6 +255,7 @@ declare namespace API {
     name?: string;
     describe?: string;
     status?: number;
+    alias?: string;
   };
 
   type UpdateUserReply = {};
@@ -223,6 +267,7 @@ declare namespace API {
     password?: string;
     re_password?: string;
     status?: number;
+    role_ids?: string[];
   };
 
   type UserBindRoleParams = {
@@ -250,10 +295,9 @@ declare namespace API {
   };
 
   type UserListUserParams = {
-    'pagination.current'?: number;
+    'pagination.page'?: number;
     'pagination.page_size'?: number;
     'pagination.total'?: number;
-    'pagination.raw_total'?: string;
   };
 
   type UserUnbindRoleParams = {

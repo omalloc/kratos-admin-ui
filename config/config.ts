@@ -51,6 +51,8 @@ export default defineConfig({
     //     borderRadius: '2px',
     //   },
     // },
+    configProvider: {},
+    appConfig: {},
   },
   /**
    * @name 数据流插件

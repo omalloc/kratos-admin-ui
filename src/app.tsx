@@ -11,6 +11,15 @@ export const request: RequestConfig = {
     },
     errorThrower() {},
   },
+  requestInterceptors: [
+    (config: any) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+  ],
   responseInterceptors: [
     (response: any) => {
       // const { data } = response;
@@ -26,23 +35,16 @@ export const request: RequestConfig = {
 // 更多信息见文档：https://umijs.org/docs/api/runtime-config#getinitialstate
 export async function getInitialState(): Promise<{
   collapsed: boolean;
-  name: string;
-  apps?: any[];
-  currentApp: string;
+  currentUser: API.UserInfo;
+  token: string;
 }> {
-  return { collapsed: false, name: 'Admin', apps: [], currentApp: 'app1' };
+  const token = localStorage.getItem('token');
+  if (token) {
+    // const user = await getUserInfo();
+    return { collapsed: false, currentUser: {}, token };
+  }
+  return { collapsed: false, currentUser: {}, token: '' };
 }
-
-const transfrom = (apps: any[]) => {
-  return apps.map((app) => {
-    return {
-      key: app.key,
-      title: app.name,
-      icon: app.icon,
-    };
-  });
-};
-
 export const layout: RunTimeLayoutConfig = ({
   initialState,
   setInitialState,
@@ -81,7 +83,7 @@ export const layout: RunTimeLayoutConfig = ({
       //   colorTextMenuActive: '#242424',
       // },
     },
-    appList: transfrom(initialState?.apps || []),
+    appList: [],
     childrenRender(dom) {
       return <App>{dom}</App>;
     },

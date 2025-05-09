@@ -50,7 +50,7 @@ const statusMapLabels: Record<number, string> = {
 };
 
 const PermissionPage: React.FC = () => {
-  const [editing, setEditing] = useState<boolean>(false);
+  const [editingId, setEditingId] = useState<string>();
   const [visible, setVisible] = useState<boolean>(false);
   const formRef = useRef<FormInstance<API.PermissionInfo>>();
   const ref = useRef<ActionType>();
@@ -58,20 +58,22 @@ const PermissionPage: React.FC = () => {
   const { message } = App.useApp();
 
   const handleAdd = () => {
-    setEditing(false);
+    setEditingId(undefined);
     setVisible(true);
 
     formRef.current?.resetFields();
   };
+
   const handleEdit = (record: API.PermissionInfo) => {
-    setEditing(true);
+    setEditingId(record.id);
     setVisible(true);
-    formRef.current?.setFieldsValue({ ...record });
   };
+
   const handleCancel = () => {
     setVisible(false);
-    setEditing(false);
+    setEditingId(undefined);
   };
+
   const columns: ProColumns<API.PermissionInfo>[] = [
     {
       dataIndex: 'name',
@@ -145,20 +147,32 @@ const PermissionPage: React.FC = () => {
       />
 
       <ModalForm
-        title={editing ? `编辑权限` : '新增权限'}
+        title={editingId ? `编辑权限` : '新增权限'}
         open={visible}
         formRef={formRef}
-        initialValues={{
-          actions: [...defActions],
+        params={{ id: editingId }}
+        request={async (params: { id: string | undefined }) => {
+          if (params.id === undefined) {
+            return {};
+          }
+
+          const data = await permissionService.permissionGetPermission({
+            id: params.id,
+          });
+
+          console.log('ModalForm', data);
+          return {
+            ...data,
+          };
         }}
         modalProps={{
-          destroyOnClose: false,
+          destroyOnClose: true,
           onCancel: handleCancel,
         }}
         onFinish={async (payload) => {
           console.log('form payload', payload);
           try {
-            if (editing) {
+            if (editingId) {
               await permissionService.permissionUpdatePermission(
                 { id: payload.id || '' },
                 payload,
@@ -198,7 +212,7 @@ const PermissionPage: React.FC = () => {
         <Divider />
         <Collapse
           bordered={false}
-          defaultActiveKey={editing ? ['1'] : []}
+          defaultActiveKey={editingId ? ['1'] : []}
           items={[
             {
               key: '1',

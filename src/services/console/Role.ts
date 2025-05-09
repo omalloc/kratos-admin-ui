@@ -32,6 +32,14 @@ export async function roleCreateRole(
   });
 }
 
+/** 此处后端没有提供注释 GET /api/console/role-all */
+export async function roleGetAll(options?: { [key: string]: any }) {
+  return request<API.GetAllReply>('/api/console/role-all', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 GET /api/console/role/${param0} */
 export async function roleGetRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -121,14 +129,4 @@ export async function roleUnbindPermission(
       ...(options || {}),
     },
   );
-}
-
-/** 此处后端没有提供注释 PUT /api/console/role/${param0}/permission/${param1} */
-export async function getAllRole() {
-  return request<API.ListRoleReply>(`/api/console/role-all`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
 }

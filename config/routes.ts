@@ -35,4 +35,10 @@ export default [
       },
     ],
   },
+
+  {
+    path: '/passport/login',
+    component: './Passport/Login',
+    layout: false,
+  },
 ];

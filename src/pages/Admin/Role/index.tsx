@@ -10,6 +10,7 @@ import {
   ProFormText,
   ProFormTextArea,
   ProTable,
+  type ActionType,
   type ProColumns,
 } from '@ant-design/pro-components';
 import { useRequest } from '@umijs/max';
@@ -21,7 +22,7 @@ interface DataAccess {
   option: 'all' | 'own' | 'none';
 }
 
-const expandedRowRender = (record: Required<API.RoleInfo>) => {
+const expandedRowRender = (record: API.RoleInfo) => {
   if (record.permissions && record.permissions.length <= 0) {
     return (
       <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="无任何授权 " />
@@ -34,7 +35,7 @@ const expandedRowRender = (record: Required<API.RoleInfo>) => {
       column={{ md: 1, xl: 2 }}
       title="已授权的模块权限"
     >
-      {record.permissions.map((item: API.RolePermission) => {
+      {record.permissions?.map((item: API.RolePermission) => {
         return (
           <ProDescriptions.Item key={item.id} label={item.perm_id}>
             {item.actions!.map((action) => (
@@ -52,7 +53,7 @@ const RolePage: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const [editing, setEditing] = useState<boolean>(false);
   const [authorizeVisible, setAuthorizeVisible] = useState(false);
-  const actionRef = useRef();
+  const actionRef = useRef<ActionType>();
   const formRef = useRef<FormInstance<API.RoleInfo>>();
   const authorizeRef = useRef<FormInstance<API.RoleInfo>>();
   const [checkedMap, setCheckedMap] = useState<
@@ -296,13 +297,6 @@ const RolePage: React.FC = () => {
         <ProFormFieldSet name="permissions" label="授权模块" type="group">
           {(meta, index) => {
             console.log('meta', meta, 'index', index);
-            const currentMap = meta.reduce(
-              (kv, item) => {
-                kv[item.id] = item;
-                return kv;
-              },
-              {} as Record<string, API.RolePermission>,
-            );
 
             const handleChange = (item, action, checked) => {
               const newCheckedMap = { ...checkedMap };

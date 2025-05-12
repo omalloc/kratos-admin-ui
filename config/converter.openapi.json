@@ -1482,7 +1482,17 @@
       },
       "api.console.passport.CurrentUserReply": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/api.console.administration.UserInfo"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.RoleInfo"
+            }
+          }
+        }
       },
       "api.console.passport.LoginReply": {
         "type": "object",

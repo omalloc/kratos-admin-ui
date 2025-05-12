@@ -1,5 +1,5 @@
-import * as roleService from '@/services/console/Role';
-import * as userService from '@/services/console/User';
+import * as roleService from '@/services/console/role';
+import * as userService from '@/services/console/user';
 import { mergeData } from '@/utils/pagination';
 import {
   ActionType,
@@ -36,7 +36,7 @@ const UserModal: React.FC<{
   editing?: boolean;
   initialValues?: Partial<User>;
 }> = ({ open, onCancel, onOk, editing = false, initialValues }) => {
-  const { data: roleList = [] } = useRequest(() => roleService.getAllRole());
+  const { data: roleList = [] } = useRequest(() => roleService.roleGetAll());
 
   return (
     <ModalForm<User>
@@ -103,8 +103,8 @@ const UserModal: React.FC<{
         name="status"
         label="状态"
         options={[
-          { label: '启用', value: 0 },
-          { label: '禁用', value: 1 },
+          { label: '启用', value: 1 },
+          { label: '禁用', value: 0 },
         ]}
       />
       <Divider />
@@ -129,7 +129,7 @@ const UserPage: React.FC = () => {
   const [editing, setEditing] = useState(false);
   const [currentUser, setCurrentUser] = useState<Partial<User>>();
   const actionRef = useRef<ActionType>();
-  const { data: roleList = [] } = useRequest(() => roleService.getAllRole());
+  const { data: roleList = [] } = useRequest(() => roleService.roleGetAll());
 
   const handleAdd = () => {
     setEditing(false);
@@ -205,8 +205,8 @@ const UserPage: React.FC = () => {
       width: 120,
       render: (_, { status = 0 }) => (
         <Badge
-          status={status === 0 ? 'processing' : 'error'}
-          text={status === 0 ? '正常' : '禁止登录'}
+          status={status === 1 ? 'processing' : 'error'}
+          text={status === 1 ? '正常' : '禁止登录'}
         />
       ),
     },

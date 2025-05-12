@@ -12,6 +12,7 @@ import {
   ProFormText,
   setAlpha,
 } from '@ant-design/pro-components';
+import { useModel, useNavigate } from '@umijs/max';
 import { App, Col, Row, Space, Tabs, theme } from 'antd';
 import { useState, type CSSProperties } from 'react';
 
@@ -20,6 +21,8 @@ type LoginType = 'phone' | 'account';
 const Login: React.FC = () => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const { refresh } = useModel('@@initialState');
+  const navigate = useNavigate();
   const [loginType, setLoginType] = useState<LoginType>('account');
 
   const iconStyles: CSSProperties = {
@@ -65,12 +68,15 @@ const Login: React.FC = () => {
                         const { authorization } = config.headers;
                         if (authorization) {
                           localStorage.setItem('token', authorization);
+                          refresh();
                         }
                         return config;
                       },
                     ],
                   },
                 );
+
+                navigate('/admin');
 
                 return true;
               } catch (err: any) {

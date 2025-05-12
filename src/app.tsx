@@ -1,5 +1,7 @@
-import { RunTimeLayoutConfig, type RequestConfig } from '@umijs/max';
-import { App } from 'antd';
+import { passportCurrentUser } from '@/services/console/passport';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { history, RunTimeLayoutConfig, type RequestConfig } from '@umijs/max';
+import { App, Dropdown } from 'antd';
 // 运行时配置
 
 export const request: RequestConfig = {
@@ -35,14 +37,22 @@ export const request: RequestConfig = {
 // 更多信息见文档：https://umijs.org/docs/api/runtime-config#getinitialstate
 export async function getInitialState(): Promise<{
   collapsed: boolean;
-  currentUser: API.UserInfo;
+  currentUser: API.CurrentUserReply;
   token: string;
 }> {
   const token = localStorage.getItem('token');
   if (token) {
-    // const user = await getUserInfo();
-    return { collapsed: false, currentUser: {}, token };
+    try {
+      const user = await passportCurrentUser({});
+      return { collapsed: false, currentUser: user, token };
+    } catch (error) {
+      // token 到期了，需要重新登录
+      history.push('/passport/login');
+      return { collapsed: false, currentUser: {}, token: '' };
+    }
   }
+  // 有没登录，需要重新登录
+  history.push('/passport/login');
   return { collapsed: false, currentUser: {}, token: '' };
 }
 export const layout: RunTimeLayoutConfig = ({
@@ -84,6 +94,34 @@ export const layout: RunTimeLayoutConfig = ({
       // },
     },
     appList: [],
+    avatarProps: {
+      icon: <UserOutlined />,
+      size: 'small',
+      title:
+        initialState?.currentUser.user?.nickname ||
+        initialState?.currentUser.user?.username,
+      render: (props, dom) => {
+        return (
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'logout',
+                  icon: <LogoutOutlined />,
+                  label: '退出登录',
+                  onClick: () => {
+                    localStorage.removeItem('token');
+                    history.push('/passport/login');
+                  },
+                },
+              ],
+            }}
+          >
+            {dom}
+          </Dropdown>
+        );
+      },
+    },
     childrenRender(dom) {
       return <App>{dom}</App>;
     },

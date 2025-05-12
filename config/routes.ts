@@ -20,18 +20,30 @@ export default [
         name: '用户',
         icon: 'user',
         component: './Admin/User',
+        access: 'routeFilter',
+        meta: {
+          permission: ['user'],
+        },
       },
       {
         path: '/admin/role',
         name: '角色',
         icon: 'team',
         component: './Admin/Role',
+        access: 'routeFilter',
+        meta: {
+          permission: ['role'],
+        },
       },
       {
         path: '/admin/permission',
         name: '权限',
         icon: 'verified',
         component: './Admin/Permission',
+        access: 'routeFilter',
+        meta: {
+          permission: ['permission'],
+        },
       },
     ],
   },
@@ -40,5 +52,11 @@ export default [
     path: '/passport/login',
     component: './Passport/Login',
     layout: false,
+  },
+
+  {
+    path: '*',
+    layout: false,
+    component: './404',
   },
 ];

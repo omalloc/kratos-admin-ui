@@ -58,7 +58,10 @@ declare namespace API {
     role_ids?: string[];
   };
 
-  type CurrentUserReply = {};
+  type CurrentUserReply = {
+    user?: UserInfo;
+    roles?: RoleInfo[];
+  };
 
   type DeletePermissionReply = {};
 

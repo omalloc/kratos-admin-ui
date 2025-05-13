@@ -1,17 +1,6 @@
 import * as passportService from '@/services/console/passport';
-import {
-  LockOutlined,
-  MobileOutlined,
-  UserOutlined,
-  WeiboCircleOutlined,
-} from '@ant-design/icons';
-import {
-  LoginForm,
-  ProFormCaptcha,
-  ProFormCheckbox,
-  ProFormText,
-  setAlpha,
-} from '@ant-design/pro-components';
+import { LockOutlined, MobileOutlined, UserOutlined, WeiboCircleOutlined } from '@ant-design/icons';
+import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText, setAlpha } from '@ant-design/pro-components';
 import { useModel, useNavigate } from '@umijs/max';
 import { App, Col, Row, Space, Tabs, theme } from 'antd';
 import { useState, type CSSProperties } from 'react';
@@ -19,10 +8,11 @@ import { useState, type CSSProperties } from 'react';
 type LoginType = 'phone' | 'account';
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { refresh } = useModel('@@initialState');
-  const navigate = useNavigate();
   const [loginType, setLoginType] = useState<LoginType>('account');
 
   const iconStyles: CSSProperties = {
@@ -122,8 +112,7 @@ const Login: React.FC = () => {
                   fieldProps={{
                     size: 'large',
                     prefix: <LockOutlined className={'prefixIcon'} />,
-                    strengthText:
-                      '密码应包含数字、字母和特殊字符，长度至少为8个字符。',
+                    strengthText: '密码应包含数字、字母和特殊字符，长度至少为8个字符。',
                     statusRender: (value) => {
                       const getStatus = () => {
                         if (value && value.length > 12) {
@@ -136,22 +125,12 @@ const Login: React.FC = () => {
                       };
                       const status = getStatus();
                       if (status === 'pass') {
-                        return (
-                          <div style={{ color: token.colorWarning }}>
-                            强度：中
-                          </div>
-                        );
+                        return <div style={{ color: token.colorWarning }}>强度：中</div>;
                       }
                       if (status === 'ok') {
-                        return (
-                          <div style={{ color: token.colorSuccess }}>
-                            强度：强
-                          </div>
-                        );
+                        return <div style={{ color: token.colorSuccess }}>强度：强</div>;
                       }
-                      return (
-                        <div style={{ color: token.colorError }}>强度：弱</div>
-                      );
+                      return <div style={{ color: token.colorError }}>强度：弱</div>;
                     },
                   }}
                   placeholder={'密码: ant.design'}

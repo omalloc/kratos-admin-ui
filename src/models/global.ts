@@ -1,13 +1,21 @@
 // 全局共享数据示例
-import { DEFAULT_NAME } from '@/constants';
-import { useState } from 'react';
+import * as permissionService from '@/services/console/permission';
+import { useRequest } from '@umijs/max';
 
-const useUser = () => {
-  const [name, setName] = useState<string>(DEFAULT_NAME);
+const useRoleList = () => {
+  const { data: permissionMap = {}, refresh } = useRequest(() => permissionService.permissionListAllPermission(), {
+    formatResult: (res) => {
+      return res.data?.reduce<Record<string, API.PermissionInfo>>((kv, item) => {
+        kv[item.id || ''] = item;
+        return kv;
+      }, {});
+    },
+  });
+
   return {
-    name,
-    setName,
+    permissionMap,
+    refresh,
   };
 };
 
-export default useUser;
+export default useRoleList;

@@ -5,7 +5,7 @@ import {
   ModalForm,
   PageContainer,
   ProDescriptions,
-  ProFormFieldSet,
+  ProForm,
   ProFormGroup,
   ProFormText,
   ProFormTextArea,
@@ -14,30 +14,142 @@ import {
   type ProColumns,
 } from '@ant-design/pro-components';
 import { useRequest } from '@umijs/max';
-import { App, Button, Col, Empty, Row, Tag, type FormInstance } from 'antd';
-import { useMemo, useRef, useState } from 'react';
+import { App, Button, Col, Empty, Row, Tag, Tooltip } from 'antd';
+import { useRef, useState } from 'react';
 
 interface DataAccess {
   name: string;
   option: 'all' | 'own' | 'none';
 }
 
-const expandedRowRender = (record: API.RoleInfo) => {
-  if (record.permissions && record.permissions.length <= 0) {
-    return (
-      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="无任何授权 " />
-    );
+type PermissionSelectListProps = {
+  id: string;
+  value: API.RolePermission[];
+  onChange: (value: API.RolePermission[]) => void;
+  dataSource: Record<string, Required<API.PermissionInfo>>;
+};
+
+const PermissionSelectList: React.FC<PermissionSelectListProps> = (props) => {
+  const { id, value = [], onChange, dataSource } = props;
+  const permissionMap = value.reduce<Record<string, API.RolePermission>>((kv, item) => {
+    kv[item.perm_id || ''] = item;
+    return kv;
+  }, {});
+
+  const onCheckboxChange = (permissionId: string = '', item: API.Action, checked: boolean) => {
+    if (permissionMap[permissionId] === undefined) {
+      permissionMap[permissionId] = {
+        perm_id: permissionId,
+        actions: [],
+        data_access: [],
+      };
+    }
+
+    if (checked) {
+      permissionMap[permissionId].actions?.push(item);
+    } else {
+      const index = (permissionMap[permissionId].actions || []).findIndex((x) => x.key === item.key);
+      if (index > -1) {
+        permissionMap[permissionId]?.actions!.splice(index, 1);
+      }
+    }
+
+    onChange(Object.values(permissionMap));
+  };
+
+  const onCheckedAllChange = (permissionId: string = '', perm: API.RolePermission, checked: boolean) => {
+    if (permissionMap[permissionId] === undefined) {
+      permissionMap[permissionId] = {
+        perm_id: permissionId,
+        actions: [],
+        data_access: [],
+      };
+    }
+
+    if (checked) {
+      permissionMap[permissionId].actions = [...(perm.actions || [])];
+    } else {
+      permissionMap[permissionId].actions = [];
+    }
+
+    onChange(Object.values(permissionMap));
+  };
+
+  return (
+    <Row id={id} gutter={24}>
+      {Object.values(dataSource).map((item) => {
+        const perm = permissionMap[item.id || '0'];
+        const checkedAll = perm?.actions?.length === item.actions?.length;
+        const curActions = (perm?.actions || []).reduce<Record<string, API.Action>>((kv, item) => {
+          if (item.key) {
+            kv[item.key] = item;
+          }
+          return kv;
+        }, {});
+
+        return (
+          <Col key={item.id} span={24} style={{ marginBottom: 12 }}>
+            <Row gutter={16}>
+              <Col span={4} style={{ textAlign: 'right' }}>
+                {item.name}:
+              </Col>
+              <Col span={20}>
+                <Tag.CheckableTag
+                  key="all"
+                  style={{ userSelect: 'none' }}
+                  checked={checkedAll}
+                  onChange={(checked) => {
+                    onCheckedAllChange(item.id, item, checked);
+                  }}
+                >
+                  全选
+                </Tag.CheckableTag>
+                {item.actions!.map((action) => {
+                  return (
+                    <Tag.CheckableTag
+                      key={action.key}
+                      style={{ userSelect: 'none' }}
+                      checked={curActions[action.key || ''] !== undefined}
+                      onChange={(checked) => {
+                        onCheckboxChange(item.id, action, checked);
+                      }}
+                    >
+                      {action.describe}
+                    </Tag.CheckableTag>
+                  );
+                })}
+              </Col>
+            </Row>
+          </Col>
+        );
+      })}
+    </Row>
+  );
+};
+
+const ProPermissionSelectList: React.FC<any> = ({ fieldProps, dataSource, ...rest }) => {
+  return (
+    <ProForm.Item {...rest}>
+      <PermissionSelectList dataSource={dataSource} {...fieldProps} />
+    </ProForm.Item>
+  );
+};
+
+const expandedRowRender = (record: API.RoleInfo, permissionMap: Record<string, Required<API.PermissionInfo>>) => {
+  if (!record.permissions || record.permissions.length <= 0) {
+    return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="无任何授权 " />;
   }
 
   return (
-    <ProDescriptions
-      style={{ marginLeft: '48px' }}
-      column={{ md: 1, xl: 2 }}
-      title="已授权的模块权限"
-    >
-      {record.permissions?.map((item: API.RolePermission) => {
+    <ProDescriptions style={{ marginLeft: '48px' }} column={{ sm: 1, md: 1, lg: 1, xl: 2 }} title="已授权的模块权限">
+      {record.permissions.map((item: API.RolePermission) => {
+        if (!item.perm_id) {
+          return null;
+        }
+        const perm = permissionMap[item.perm_id];
+
         return (
-          <ProDescriptions.Item key={item.id} label={item.perm_id}>
+          <ProDescriptions.Item key={item.id} label={<Tooltip title={perm.name}>{perm.alias}</Tooltip>}>
             {item.actions!.map((action) => (
               <Tag key={action.key}>{action.describe}</Tag>
             ))}
@@ -49,60 +161,37 @@ const expandedRowRender = (record: API.RoleInfo) => {
 };
 
 const RolePage: React.FC = () => {
-  const [currentId, setCurrentId] = useState<string>();
-  const [visible, setVisible] = useState(false);
-  const [editing, setEditing] = useState<boolean>(false);
-  const [authorizeVisible, setAuthorizeVisible] = useState(false);
-  const actionRef = useRef<ActionType>();
-  const formRef = useRef<FormInstance<API.RoleInfo>>();
-  const authorizeRef = useRef<FormInstance<API.RoleInfo>>();
-  const [checkedMap, setCheckedMap] = useState<
-    Record<
-      string,
-      {
-        item: API.PermissionInfo;
-        actions: Record<string, API.Action>;
-      }
-    >
-  >({});
-
   const { message } = App.useApp();
 
-  const { data: permissionList = [] } = useRequest(
-    () => permissionService.permissionListAllPermission(),
-    {
-      onSuccess: (res: API.PermissionInfo[]) => {
-        console.log('permissionList', res);
-        setCheckedMap({});
-      },
-    },
-  );
+  const [currentId, setCurrentId] = useState<string>();
+  const [editVisible, setEditVisible] = useState(false);
+  const [authorizeVisible, setAuthorizeVisible] = useState(false);
+  const actionRef = useRef<ActionType>();
 
-  const permissionMap = useMemo(() => {
-    return Object.fromEntries(permissionList.map((item) => [item.id, item]));
-  }, [permissionList]);
+  const { data: permissionMap = {} } = useRequest(() => permissionService.permissionListAllPermission(), {
+    formatResult: (res) => {
+      return res.data?.reduce<Record<string, Required<API.PermissionInfo>>>((kv, item) => {
+        kv[item.id || ''] = item as Required<API.PermissionInfo>;
+        return kv;
+      }, {});
+    },
+  });
 
   const handleAdd = () => {
-    setVisible(true);
-    setEditing(false);
-    formRef.current?.resetFields();
+    setEditVisible(true);
+    setCurrentId(undefined);
   };
   const handleEdit = (record: API.RoleInfo) => {
-    setVisible(true);
-    setEditing(true);
-    formRef.current?.setFieldsValue({ ...record });
+    setEditVisible(true);
+    setCurrentId(record.id);
   };
   const handleAuthorize = (record: API.RoleInfo) => {
-    console.log('handleAuthorize.record', record);
     setAuthorizeVisible(true);
     setCurrentId(record.id);
-    authorizeRef.current?.setFieldsValue({
-      id: record.id,
-      permissions: record.permissions,
-    });
   };
   const handleCancel = () => {
-    setVisible(false);
+    setCurrentId(undefined);
+    setEditVisible(false);
   };
 
   const columns: ProColumns<API.RoleInfo>[] = [
@@ -143,7 +232,7 @@ const RolePage: React.FC = () => {
             success: true,
           };
         }}
-        expandable={{ expandedRowRender }}
+        expandable={{ expandedRowRender: (record) => expandedRowRender(record, permissionMap) }}
         toolBarRender={() => {
           return [
             <Button key="add" type="primary" onClick={handleAdd}>
@@ -153,17 +242,28 @@ const RolePage: React.FC = () => {
         }}
       />
 
-      <ModalForm
-        formRef={formRef}
-        open={visible}
+      <ModalForm<API.RoleInfo>
+        open={editVisible}
+        params={{
+          currentId,
+        }}
+        request={async (params) => {
+          if (!params.currentId) {
+            return {
+              id: undefined,
+            };
+          }
+
+          const data = await roleService.roleGetRole({ id: params.currentId });
+          return {
+            ...data,
+          };
+        }}
         onFinish={async (payload) => {
           console.log('values', payload);
           try {
-            if (editing) {
-              await roleService.roleUpdateRole(
-                { id: payload.id || '' },
-                payload,
-              );
+            if (payload.id) {
+              await roleService.roleUpdateRole({ id: payload.id || '' }, payload);
               message.success('编辑成功');
             } else {
               await roleService.roleCreateRole(payload);
@@ -178,7 +278,7 @@ const RolePage: React.FC = () => {
           }
         }}
         modalProps={{
-          destroyOnClose: false,
+          destroyOnHidden: true,
           onCancel: handleCancel,
         }}
       >
@@ -190,214 +290,66 @@ const RolePage: React.FC = () => {
             help="角色标识是唯一的，不能重复"
             rules={[{ required: true, message: '请输入角色标识' }]}
           />
-          <ProFormText
-            name="alias"
-            label="角色名称"
-            rules={[{ required: true, message: '请输入角色名称' }]}
-          />
+          <ProFormText name="alias" label="角色名称" rules={[{ required: true, message: '请输入角色名称' }]} />
         </ProFormGroup>
-        <ProFormTextArea
-          name="describe"
-          label="描述"
-          rules={[{ required: true, message: '请输入描述' }]}
-        />
+        <ProFormTextArea name="describe" label="描述" rules={[{ required: true, message: '请输入描述' }]} />
       </ModalForm>
 
-      <ModalForm
+      <ModalForm<API.RoleInfo>
         title="授权"
-        formRef={authorizeRef}
         open={authorizeVisible}
+        params={{
+          currentId,
+        }}
+        request={async (params) => {
+          if (!params.currentId) {
+            message.error('授权目标不存在');
+            return {
+              id: undefined,
+              permissions: [],
+            };
+          }
+
+          const data = await roleService.roleGetRole({ id: params.currentId });
+          return {
+            id: data.id,
+            permissions: data.permissions || [],
+          };
+        }}
+        modalProps={{
+          destroyOnHidden: true,
+          onCancel: () => {
+            setAuthorizeVisible(false);
+          },
+        }}
         onFinish={async (values) => {
-          console.log('values', values);
-          console.log('checkedMap', checkedMap);
-
           try {
-            // 将 checkedMap 转换为后端需要的格式
-            const data = Object.entries(checkedMap).map(([itemId, data]) => ({
-              permission_id: itemId,
-              actions: Object.entries(data.actions)
-                .filter(([_, action]) => action.checked)
-                .map(([_, action]) => action),
-              data_access: [], // 暂时为空数组
-            }));
-
-            // 调用 roleBindPermission
             await roleService.roleBindPermission(
-              { id: values.id },
+              { id: values.id || '' },
               {
-                id: values.id,
-                data,
+                data: values.permissions?.map((value) => {
+                  return {
+                    permission_id: value.perm_id,
+                    actions: value.actions,
+                    data_access: value.data_access,
+                  };
+                }),
               },
             );
-
             message.success('授权成功');
-            setAuthorizeVisible(false);
             actionRef.current?.reload();
+            setAuthorizeVisible(false);
           } catch (error) {
             console.error(error);
             message.error('授权失败');
           }
         }}
-        params={{
-          currentId,
-        }}
-        request={async (params) => {
-          console.log('params', params);
-          const res = await roleService.roleGetRole({
-            id: params.currentId,
-          } as any);
-          console.log('res', res);
-
-          // 初始化 checkedMap
-          const initialCheckedMap: Record<
-            string,
-            {
-              item: API.PermissionInfo;
-              actions: Record<string, API.Action>;
-            }
-          > = {};
-
-          // 遍历权限列表，设置初始选中状态
-          permissionList.forEach((perm: API.PermissionInfo) => {
-            const existingPermission = res.permissions?.find(
-              (p) => p.perm_id === perm.id,
-            );
-            if (existingPermission) {
-              initialCheckedMap[perm.id] = {
-                item: perm,
-                actions: {},
-              };
-              // 设置已选中的 actions
-              existingPermission.actions?.forEach((action) => {
-                if (action.key) {
-                  initialCheckedMap[perm.id].actions[action.key] = {
-                    ...action,
-                    checked: true,
-                  };
-                }
-              });
-            }
-          });
-
-          setCheckedMap(initialCheckedMap);
-
-          return {
-            ...res,
-          };
-        }}
-        modalProps={{
-          destroyOnClose: false,
-          onCancel: () => {
-            setAuthorizeVisible(false);
-            setCheckedMap({});
-          },
-        }}
       >
         <ProFormText name="id" hidden />
-        <ProFormFieldSet name="permissions" label="授权模块" type="group">
-          {(meta, index) => {
-            console.log('meta', meta, 'index', index);
-
-            const handleChange = (item, action, checked) => {
-              const newCheckedMap = { ...checkedMap };
-
-              if (checked) {
-                // 如果选中，添加到 checkedMap
-                if (!newCheckedMap[item.id]) {
-                  newCheckedMap[item.id] = {
-                    item,
-                    actions: {},
-                  };
-                }
-                newCheckedMap[item.id].actions[action.key] = {
-                  ...action,
-                  checked: true,
-                };
-              } else {
-                // 如果取消选中，将 checked 设置为 false
-                if (newCheckedMap[item.id]) {
-                  newCheckedMap[item.id].actions[action.key] = {
-                    ...action,
-                    checked: false,
-                  };
-                }
-              }
-
-              setCheckedMap(newCheckedMap);
-              console.log('checkedMap after update:', newCheckedMap);
-            };
-
-            return (
-              <Row gutter={24}>
-                {permissionList.map((item) => {
-                  const perm = checkedMap[item.id];
-                  const checkedAll =
-                    perm?.actions &&
-                    item.actions?.every(
-                      (action) => perm.actions[action.key]?.checked === true,
-                    );
-
-                  return (
-                    <Col key={item.id} span={24} style={{ marginBottom: 12 }}>
-                      <Row gutter={16}>
-                        <Col span={4} style={{ textAlign: 'right' }}>
-                          {item.name}:
-                        </Col>
-                        <Col span={20}>
-                          <Tag.CheckableTag
-                            key="all"
-                            checked={checkedAll}
-                            onChange={(checked) => {
-                              // 全选/取消全选
-                              const newCheckedMap = { ...checkedMap };
-                              if (!newCheckedMap[item.id]) {
-                                newCheckedMap[item.id] = {
-                                  item,
-                                  actions: {},
-                                };
-                              }
-                              // 更新所有 action 的 checked 状态
-                              item.actions?.forEach((action) => {
-                                newCheckedMap[item.id].actions[action.key] = {
-                                  ...action,
-                                  checked,
-                                };
-                              });
-                              setCheckedMap(newCheckedMap);
-                            }}
-                          >
-                            全选
-                          </Tag.CheckableTag>
-                          {item.actions!.map((action) => {
-                            const isChecked =
-                              checkedMap[item.id]?.actions?.[action.key]
-                                ?.checked;
-                            return (
-                              <Tag.CheckableTag
-                                key={action.key}
-                                checked={isChecked}
-                                onChange={(checked) =>
-                                  handleChange(item, action, checked)
-                                }
-                              >
-                                {action.describe}
-                              </Tag.CheckableTag>
-                            );
-                          })}
-                        </Col>
-                      </Row>
-                    </Col>
-                  );
-                })}
-              </Row>
-            );
-          }}
-        </ProFormFieldSet>
+        <ProPermissionSelectList name="permissions" dataSource={permissionMap} label="授权模块" />
       </ModalForm>
     </PageContainer>
   );
 };
-
-const PermissionSelectList: React.FC = () => {};
 
 export default RolePage;

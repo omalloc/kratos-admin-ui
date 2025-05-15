@@ -53,7 +53,11 @@ export default [
     component: './Passport/Login',
     layout: false,
   },
-
+  {
+    path: '/passport/register',
+    component: './Passport/Register',
+    layout: false,
+  },
   {
     path: '*',
     layout: false,

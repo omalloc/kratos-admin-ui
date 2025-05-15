@@ -194,18 +194,17 @@ const Login: React.FC = () => {
             <div
               style={{
                 marginBlockEnd: 24,
+                display: 'flex',
+                justifyContent: 'space-between',
               }}
             >
               <ProFormCheckbox noStyle name="autoLogin">
                 自动登录
               </ProFormCheckbox>
-              <a
-                style={{
-                  float: 'right',
-                }}
-              >
-                忘记密码
-              </a>
+              <Space>
+                <a onClick={() => navigate('/passport/register')}>注册账号</a>
+                <a>忘记密码</a>
+              </Space>
             </div>
           </LoginForm>
         </Col>

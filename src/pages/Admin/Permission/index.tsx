@@ -162,7 +162,7 @@ const PermissionPage: React.FC = () => {
           };
         }}
         modalProps={{
-          destroyOnClose: true,
+          destroyOnHidden: true,
           onCancel: handleCancel,
         }}
         onFinish={async (payload) => {

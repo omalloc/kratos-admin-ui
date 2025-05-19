@@ -48,7 +48,7 @@ const UserModal: React.FC<{
         gutter: [16, 0],
       }}
       modalProps={{
-        destroyOnClose: true,
+        destroyOnHidden: true,
         onCancel,
       }}
       initialValues={initialValues}

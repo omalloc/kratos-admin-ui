@@ -18,10 +18,7 @@ export async function roleListRole(
 }
 
 /** 此处后端没有提供注释 POST /api/console/role */
-export async function roleCreateRole(
-  body: API.CreateRoleRequest,
-  options?: { [key: string]: any },
-) {
+export async function roleCreateRole(body: API.CreateRoleRequest, options?: { [key: string]: any }) {
   return request<API.CreateRoleReply>('/api/console/role', {
     method: 'POST',
     headers: {
@@ -95,18 +92,15 @@ export async function roleBindPermission(
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.BindPermissionReply>(
-    `/api/console/role/${param0}/permission`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      params: { ...queryParams },
-      data: body,
-      ...(options || {}),
+  return request<API.BindPermissionReply>(`/api/console/role/${param0}/permission`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  );
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
 }
 
 /** 此处后端没有提供注释 PUT /api/console/role/${param0}/permission/${param1} */
@@ -117,16 +111,13 @@ export async function roleUnbindPermission(
   options?: { [key: string]: any },
 ) {
   const { id: param0, permission_id: param1, ...queryParams } = params;
-  return request<API.UnbindPermissionReply>(
-    `/api/console/role/${param0}/permission/${param1}`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      params: { ...queryParams },
-      data: body,
-      ...(options || {}),
+  return request<API.UnbindPermissionReply>(`/api/console/role/${param0}/permission/${param1}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  );
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
 }

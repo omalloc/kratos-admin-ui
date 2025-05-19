@@ -4,13 +4,10 @@ export default (initialState: { currentUser: API.CurrentUserReply }) => {
   // const canSeeAdmin = !!(initialState && initialState.currentUser);
 
   const routeAccessMap =
-    initialState.currentUser.roles?.reduce<Record<string, API.RoleInfo>>(
-      (kv, item) => {
-        kv[item.name!.toLowerCase()] = item;
-        return kv;
-      },
-      {},
-    ) || {};
+    initialState.currentUser.roles?.reduce<Record<string, API.RoleInfo>>((kv, item) => {
+      kv[item.name!.toLowerCase()] = item;
+      return kv;
+    }, {}) || {};
 
   return {
     doAction: (action: string) => {

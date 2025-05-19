@@ -15,15 +15,14 @@ const ONE_DAY = 24 * ONE_HOUR;
 
 const DEFAULT_MS_PRECISION = Math.log10(ONE_MILLISECOND);
 
-const UNIT_STEPS: { unit: string; microseconds: number; ofPrevious: number }[] =
-  [
-    { unit: 'd', microseconds: ONE_DAY, ofPrevious: 24 },
-    { unit: 'h', microseconds: ONE_HOUR, ofPrevious: 60 },
-    { unit: 'm', microseconds: ONE_MINUTE, ofPrevious: 60 },
-    { unit: 's', microseconds: ONE_SECOND, ofPrevious: 1000 },
-    { unit: 'ms', microseconds: ONE_MILLISECOND, ofPrevious: 1000 },
-    { unit: 'μs', microseconds: 1, ofPrevious: 1000 },
-  ];
+const UNIT_STEPS: { unit: string; microseconds: number; ofPrevious: number }[] = [
+  { unit: 'd', microseconds: ONE_DAY, ofPrevious: 24 },
+  { unit: 'h', microseconds: ONE_HOUR, ofPrevious: 60 },
+  { unit: 'm', microseconds: ONE_MINUTE, ofPrevious: 60 },
+  { unit: 's', microseconds: ONE_SECOND, ofPrevious: 1000 },
+  { unit: 'ms', microseconds: ONE_MILLISECOND, ofPrevious: 1000 },
+  { unit: 'μs', microseconds: 1, ofPrevious: 1000 },
+];
 
 // 示例方法，没有实际意义
 export function trim(str: string) {
@@ -71,24 +70,17 @@ export function formatDuration(duration: number): string {
   // Drop all units that are too large except the last one
   const [primaryUnit, secondaryUnit] = _dropWhile(
     UNIT_STEPS,
-    ({ microseconds }, index) =>
-      index < UNIT_STEPS.length - 1 && microseconds > duration,
+    ({ microseconds }, index) => index < UNIT_STEPS.length - 1 && microseconds > duration,
   );
 
   if (primaryUnit.ofPrevious === 1000) {
     // If the unit is decimal based, display as a decimal
-    return `${_round(duration / primaryUnit.microseconds, 2)}${
-      primaryUnit.unit
-    }`;
+    return `${_round(duration / primaryUnit.microseconds, 2)}${primaryUnit.unit}`;
   }
 
   const primaryValue = Math.floor(duration / primaryUnit.microseconds);
   const primaryUnitString = `${primaryValue}${primaryUnit.unit}`;
-  const secondaryValue = Math.round(
-    (duration / secondaryUnit.microseconds) % primaryUnit.ofPrevious,
-  );
+  const secondaryValue = Math.round((duration / secondaryUnit.microseconds) % primaryUnit.ofPrevious);
   const secondaryUnitString = `${secondaryValue}${secondaryUnit.unit}`;
-  return secondaryValue === 0
-    ? primaryUnitString
-    : `${primaryUnitString} ${secondaryUnitString}`;
+  return secondaryValue === 0 ? primaryUnitString : `${primaryUnitString} ${secondaryUnitString}`;
 }

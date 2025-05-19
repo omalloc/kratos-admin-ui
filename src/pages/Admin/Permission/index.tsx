@@ -106,9 +106,7 @@ const PermissionPage: React.FC = () => {
       dataIndex: 'status',
       title: '状态',
       valueEnum: statusMapLabels,
-      renderText: (status) => (
-        <Tag color={statusMapColors[status]}>{statusMapLabels[status]}</Tag>
-      ),
+      renderText: (status) => <Tag color={statusMapColors[status]}>{statusMapLabels[status]}</Tag>,
       width: 100,
     },
     {
@@ -130,9 +128,7 @@ const PermissionPage: React.FC = () => {
         actionRef={ref}
         columns={columns}
         request={async (params) => {
-          const res = await permissionService.permissionListPermission(
-            mergeData(params),
-          );
+          const res = await permissionService.permissionListPermission(mergeData(params));
           return {
             data: res.data,
             total: res.pagination?.total,
@@ -173,10 +169,7 @@ const PermissionPage: React.FC = () => {
           console.log('form payload', payload);
           try {
             if (editingId) {
-              await permissionService.permissionUpdatePermission(
-                { id: payload.id || '' },
-                payload,
-              );
+              await permissionService.permissionUpdatePermission({ id: payload.id || '' }, payload);
               message.success('编辑成功');
             } else {
               await permissionService.permissionCreatePermission(payload);
@@ -227,9 +220,7 @@ const PermissionPage: React.FC = () => {
                       <Button
                         type="link"
                         onClick={() => {
-                          formRef.current?.setFieldValue('actions', [
-                            ...defActions,
-                          ]);
+                          formRef.current?.setFieldValue('actions', [...defActions]);
                         }}
                       >
                         填充默认
@@ -240,11 +231,7 @@ const PermissionPage: React.FC = () => {
                   <ProFormGroup>
                     <ProFormText name="key" label="动作" width={120} />
                     <ProFormText name="describe" label="描述" width={150} />
-                    <ProFormCheckbox
-                      name="checked"
-                      label="默认选中"
-                      width={70}
-                    />
+                    <ProFormCheckbox name="checked" label="默认选中" width={70} />
                   </ProFormGroup>
                 </ProFormList>
               ),

@@ -13,9 +13,7 @@ export async function getServices(): Promise<Array<Service>> {
 }
 
 export async function getServiceOperations(serviceName: string) {
-  return request(
-    `${traceApiRoot}/services/${encodeURIComponent(serviceName)}/operations`,
-  ).then((res) => {
+  return request(`${traceApiRoot}/services/${encodeURIComponent(serviceName)}/operations`).then((res) => {
     const data = res?.data.map((k: any) => ({ label: k, value: k })) || [];
     return [{ label: 'all', value: 'all' }, ...data];
   });

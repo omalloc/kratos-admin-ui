@@ -55,10 +55,7 @@ export async function getInitialState(): Promise<{
   history.push('/passport/login');
   return { collapsed: false, currentUser: {}, token: '' };
 }
-export const layout: RunTimeLayoutConfig = ({
-  initialState,
-  setInitialState,
-}) => {
+export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
     logo: '/logo.svg',
     title: '',
@@ -97,9 +94,7 @@ export const layout: RunTimeLayoutConfig = ({
     avatarProps: {
       icon: <UserOutlined />,
       size: 'small',
-      title:
-        initialState?.currentUser.user?.nickname ||
-        initialState?.currentUser.user?.username,
+      title: initialState?.currentUser.user?.nickname || initialState?.currentUser.user?.username,
       render: (props, dom) => {
         return (
           <Dropdown

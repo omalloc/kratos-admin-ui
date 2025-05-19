@@ -1,8 +1,4 @@
-import {
-  PageContainer,
-  ProCard,
-  StatisticCard,
-} from '@ant-design/pro-components';
+import { PageContainer, ProCard, StatisticCard } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Col, Row } from 'antd';
 
@@ -39,17 +35,11 @@ const HomePage: React.FC = () => {
               }}
             />
             <StatisticCard.Operation>=</StatisticCard.Operation>
-            <StatisticCard
-              statistic={{ title: '在线', value: 20, status: 'processing' }}
-            />
+            <StatisticCard statistic={{ title: '在线', value: 20, status: 'processing' }} />
             <StatisticCard.Operation>+</StatisticCard.Operation>
-            <StatisticCard
-              statistic={{ title: '不可用', value: 1, status: 'error' }}
-            />
+            <StatisticCard statistic={{ title: '不可用', value: 1, status: 'error' }} />
             <StatisticCard.Operation>+</StatisticCard.Operation>
-            <StatisticCard
-              statistic={{ title: '不在线', value: 1, status: 'warning' }}
-            />
+            <StatisticCard statistic={{ title: '不在线', value: 1, status: 'warning' }} />
           </StatisticCard.Group>
         </Col>
       </Row>

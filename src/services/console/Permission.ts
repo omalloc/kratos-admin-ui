@@ -18,10 +18,7 @@ export async function permissionListPermission(
 }
 
 /** 此处后端没有提供注释 POST /api/console/permission */
-export async function permissionCreatePermission(
-  body: API.CreatePermissionRequest,
-  options?: { [key: string]: any },
-) {
+export async function permissionCreatePermission(body: API.CreatePermissionRequest, options?: { [key: string]: any }) {
   return request<API.CreatePermissionReply>('/api/console/permission', {
     method: 'POST',
     headers: {
@@ -33,11 +30,7 @@ export async function permissionCreatePermission(
 }
 
 /** 此处后端没有提供注释 GET /api/console/permission-scoped */
-export async function permissionListAllPermission(
-  options?: {
-    [key: string]: any;
-  },
-) {
+export async function permissionListAllPermission(options?: { [key: string]: any }) {
   return request<API.ListAllPermissionReply>('/api/console/permission-scoped', {
     method: 'GET',
     ...(options || {}),
@@ -66,18 +59,15 @@ export async function permissionUpdatePermission(
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.UpdatePermissionReply>(
-    `/api/console/permission/${param0}`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      params: { ...queryParams },
-      data: body,
-      ...(options || {}),
+  return request<API.UpdatePermissionReply>(`/api/console/permission/${param0}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  );
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
 }
 
 /** 此处后端没有提供注释 DELETE /api/console/permission/${param0} */
@@ -87,12 +77,9 @@ export async function permissionDeletePermission(
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.DeletePermissionReply>(
-    `/api/console/permission/${param0}`,
-    {
-      method: 'DELETE',
-      params: { ...queryParams },
-      ...(options || {}),
-    },
-  );
+  return request<API.DeletePermissionReply>(`/api/console/permission/${param0}`, {
+    method: 'DELETE',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
 }

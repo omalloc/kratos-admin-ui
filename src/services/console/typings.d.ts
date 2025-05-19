@@ -5,17 +5,17 @@ declare namespace API {
     checked?: boolean;
   };
 
-  type BindPermissionBodyRequest = {
-    permission_id?: string;
-    actions?: Action[];
-    data_access?: Action[];
-  };
-
   type BindPermissionReply = {};
 
   type BindPermissionRequest = {
     id?: string;
-    data?: BindPermissionBodyRequest[];
+    data?: BindPermissionRequestBindPermissionBody[];
+  };
+
+  type BindPermissionRequestBindPermissionBody = {
+    permission_id?: string;
+    actions?: Action[];
+    data_access?: Action[];
   };
 
   type BindRoleReply = {};
@@ -138,6 +138,10 @@ declare namespace API {
     total?: number;
   };
 
+  type PassportUpdateUsernameParams = {
+    id: string;
+  };
+
   type PermissionDeletePermissionParams = {
     id: string;
   };
@@ -170,11 +174,29 @@ declare namespace API {
 
   type RegisterReply = {};
 
-  type RegisterRequest = {};
+  type RegisterRequest = {
+    /** 用户名 */
+    username?: string;
+    /** 昵称 */
+    nickname?: string;
+    /** 密码 */
+    password?: string;
+    /** 邮箱 */
+    email?: string;
+    /** 验证码 */
+    captcha?: string;
+  };
 
   type ResetPasswordReply = {};
 
-  type ResetPasswordRequest = {};
+  type ResetPasswordRequest = {
+    /** 重置密码令牌 */
+    token?: string;
+    /** 邮箱 */
+    email?: string;
+    /** 密码 */
+    password?: string;
+  };
 
   type RoleBindPermissionParams = {
     id: string;
@@ -229,7 +251,16 @@ declare namespace API {
 
   type SendCaptchaReply = {};
 
-  type SendCaptchaRequest = {};
+  type SendCaptchaRequest = {
+    type?: number;
+    from?: string;
+  };
+
+  type SendResetPasswordCaptchaReply = {};
+
+  type SendResetPasswordCaptchaRequest = {
+    email?: string;
+  };
 
   type UnbindPermissionReply = {};
 
@@ -251,6 +282,14 @@ declare namespace API {
     status?: number;
   };
 
+  type UpdateProfileReply = {};
+
+  type UpdateProfileRequest = {
+    nickname?: string;
+    bio?: string;
+    avatar?: string;
+  };
+
   type UpdateRoleReply = {};
 
   type UpdateRoleRequest = {
@@ -259,6 +298,13 @@ declare namespace API {
     describe?: string;
     status?: number;
     alias?: string;
+  };
+
+  type UpdateUsernameReply = {};
+
+  type UpdateUsernameRequest = {
+    id?: string;
+    username?: string;
   };
 
   type UpdateUserReply = {};

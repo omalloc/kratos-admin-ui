@@ -18,10 +18,7 @@ export async function userListUser(
 }
 
 /** 此处后端没有提供注释 POST /api/console/user */
-export async function userCreateUser(
-  body: API.CreateUserRequest,
-  options?: { [key: string]: any },
-) {
+export async function userCreateUser(body: API.CreateUserRequest, options?: { [key: string]: any }) {
   return request<API.CreateUserReply>('/api/console/user', {
     method: 'POST',
     headers: {
@@ -105,12 +102,9 @@ export async function userUnbindRole(
   options?: { [key: string]: any },
 ) {
   const { id: param0, role_id: param1, ...queryParams } = params;
-  return request<API.UnbindRoleReply>(
-    `/api/console/user/${param0}/role/${param1}`,
-    {
-      method: 'DELETE',
-      params: { ...queryParams },
-      ...(options || {}),
-    },
-  );
+  return request<API.UnbindRoleReply>(`/api/console/user/${param0}/role/${param1}`, {
+    method: 'DELETE',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
 }

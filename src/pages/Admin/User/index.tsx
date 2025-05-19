@@ -55,10 +55,7 @@ const UserModal: React.FC<{
       onFinish={async (values) => {
         try {
           if (editing && values.id) {
-            await userService.userUpdateUser(
-              { id: values.id },
-              values as API.UpdateUserRequest,
-            );
+            await userService.userUpdateUser({ id: values.id }, values as API.UpdateUserRequest);
           } else {
             await userService.userCreateUser(values as API.CreateUserRequest);
           }
@@ -72,31 +69,14 @@ const UserModal: React.FC<{
     >
       <ProFormText name="id" hidden />
       <ProFormGroup style={{ marginTop: '24px' }}>
-        <ProFormText
-          name="username"
-          label="用户名"
-          colProps={{ md: 12, xl: 12 }}
-          rules={[{ required: true }]}
-        />
-        <ProFormText
-          name="nickname"
-          label="昵称"
-          colProps={{ md: 12, xl: 12 }}
-        />
+        <ProFormText name="username" label="用户名" colProps={{ md: 12, xl: 12 }} rules={[{ required: true }]} />
+        <ProFormText name="nickname" label="昵称" colProps={{ md: 12, xl: 12 }} />
       </ProFormGroup>
       <ProFormText name="email" label="电子邮箱" rules={[{ required: true }]} />
       {!editing && (
         <ProFormGroup>
-          <ProFormText.Password
-            name="password"
-            label="密码"
-            rules={[{ required: true }]}
-          />
-          <ProFormText.Password
-            name="re_password"
-            label="确认密码"
-            rules={[{ required: true }]}
-          />
+          <ProFormText.Password name="password" label="密码" rules={[{ required: true }]} />
+          <ProFormText.Password name="re_password" label="确认密码" rules={[{ required: true }]} />
         </ProFormGroup>
       )}
       <ProFormRadio.Group
@@ -204,10 +184,7 @@ const UserPage: React.FC = () => {
       title: '状态',
       width: 120,
       render: (_, { status = 0 }) => (
-        <Badge
-          status={status === 1 ? 'processing' : 'error'}
-          text={status === 1 ? '正常' : '禁止登录'}
-        />
+        <Badge status={status === 1 ? 'processing' : 'error'} text={status === 1 ? '正常' : '禁止登录'} />
       ),
     },
     {
@@ -220,12 +197,7 @@ const UserPage: React.FC = () => {
           编辑
         </a>,
         <Divider key="split_1" type="vertical" />,
-        <a
-          key="disabled"
-          onClick={() =>
-            handleUpdateStatus(record.id, record.status === 0 ? 1 : 0)
-          }
-        >
+        <a key="disabled" onClick={() => handleUpdateStatus(record.id, record.status === 0 ? 1 : 0)}>
           {record.status === 0 ? '禁用' : '启用'}
         </a>,
         <Divider key="split_2" type="vertical" />,

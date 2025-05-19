@@ -6,6 +6,7 @@ export default [
     component: './Home',
   },
 
+  // Admin
   {
     path: '/admin',
     name: '系统管理',
@@ -48,16 +49,30 @@ export default [
     ],
   },
 
+  // Passport
   {
-    path: '/passport/login',
-    component: './Passport/Login',
+    path: '/passport',
+    component: './Passport',
     layout: false,
+    routes: [
+      {
+        name: '用户登录',
+        path: '/passport/login',
+        component: './Passport/Login',
+      },
+      {
+        name: '用户注册',
+        path: '/passport/register',
+        component: './Passport/Register',
+      },
+      {
+        name: '重置密码',
+        path: '/passport/reset-password',
+        component: './Passport/ResetPassword',
+      },
+    ],
   },
-  {
-    path: '/passport/register',
-    component: './Passport/Register',
-    layout: false,
-  },
+
   {
     path: '*',
     layout: false,

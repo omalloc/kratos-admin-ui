@@ -1,7 +1,4 @@
-import {
-  ProFormField,
-  type ProFormFieldProps,
-} from '@ant-design/pro-components';
+import { ProFormField, type ProFormFieldProps } from '@ant-design/pro-components';
 import { InputNumber, Select, Space } from 'antd';
 import { forwardRef } from 'react';
 
@@ -45,10 +42,10 @@ const ProtocolSelect: React.FC<ProtocolSelectProps> = ({
   );
 };
 
-const ProFormProtocolSelectRender: React.ForwardRefRenderFunction<
-  any,
-  ProFormFieldProps
-> = ({ fieldProps, proFieldProps, ...rest }, ref) => {
+const ProFormProtocolSelectRender: React.ForwardRefRenderFunction<any, ProFormFieldProps> = (
+  { fieldProps, proFieldProps, ...rest },
+  ref,
+) => {
   return (
     <ProFormField
       ref={ref}

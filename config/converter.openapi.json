@@ -17,9 +17,7 @@
   "paths": {
     "/api/console/passport/current": {
       "get": {
-        "tags": [
-          "Passport"
-        ],
+        "tags": ["Passport"],
         "description": "获取当前用户信息",
         "operationId": "Passport_CurrentUser",
         "responses": {
@@ -38,9 +36,7 @@
     },
     "/api/console/passport/login": {
       "post": {
-        "tags": [
-          "Passport"
-        ],
+        "tags": ["Passport"],
         "description": "登录",
         "operationId": "Passport_Login",
         "requestBody": {
@@ -69,9 +65,7 @@
     },
     "/api/console/passport/logout": {
       "post": {
-        "tags": [
-          "Passport"
-        ],
+        "tags": ["Passport"],
         "description": "登出",
         "operationId": "Passport_Logout",
         "requestBody": {
@@ -98,11 +92,38 @@
         }
       }
     },
+    "/api/console/passport/profile": {
+      "post": {
+        "tags": ["Passport"],
+        "description": "更新用户信息",
+        "operationId": "Passport_UpdateProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.passport.UpdateProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.passport.UpdateProfileReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/console/passport/register": {
       "post": {
-        "tags": [
-          "Passport"
-        ],
+        "tags": ["Passport"],
         "description": "注册",
         "operationId": "Passport_Register",
         "requestBody": {
@@ -131,9 +152,7 @@
     },
     "/api/console/passport/reset_password": {
       "post": {
-        "tags": [
-          "Passport"
-        ],
+        "tags": ["Passport"],
         "description": "重置密码",
         "operationId": "Passport_ResetPassword",
         "requestBody": {
@@ -162,9 +181,7 @@
     },
     "/api/console/passport/send_captcha": {
       "post": {
-        "tags": [
-          "Passport"
-        ],
+        "tags": ["Passport"],
         "description": "发送验证码",
         "operationId": "Passport_SendCaptcha",
         "requestBody": {
@@ -191,11 +208,77 @@
         }
       }
     },
+    "/api/console/passport/send_reset_password": {
+      "post": {
+        "tags": ["Passport"],
+        "description": "发送重置密码验证码",
+        "operationId": "Passport_SendResetPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.passport.SendResetPasswordCaptchaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.passport.SendResetPasswordCaptchaReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/console/passport/{id}/username": {
+      "post": {
+        "tags": ["Passport"],
+        "description": "更新用户名",
+        "operationId": "Passport_UpdateUsername",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/api.console.passport.UpdateUsernameRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api.console.passport.UpdateUsernameReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/console/permission": {
       "get": {
-        "tags": [
-          "Permission"
-        ],
+        "tags": ["Permission"],
         "operationId": "Permission_ListPermission",
         "parameters": [
           {
@@ -259,9 +342,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Permission"
-        ],
+        "tags": ["Permission"],
         "operationId": "Permission_CreatePermission",
         "requestBody": {
           "content": {
@@ -289,9 +370,7 @@
     },
     "/api/console/permission-scoped": {
       "get": {
-        "tags": [
-          "Permission"
-        ],
+        "tags": ["Permission"],
         "operationId": "Permission_ListAllPermission",
         "responses": {
           "200": {
@@ -309,9 +388,7 @@
     },
     "/api/console/permission/{id}": {
       "get": {
-        "tags": [
-          "Permission"
-        ],
+        "tags": ["Permission"],
         "operationId": "Permission_GetPermission",
         "parameters": [
           {
@@ -337,9 +414,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Permission"
-        ],
+        "tags": ["Permission"],
         "operationId": "Permission_UpdatePermission",
         "parameters": [
           {
@@ -375,9 +450,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Permission"
-        ],
+        "tags": ["Permission"],
         "operationId": "Permission_DeletePermission",
         "parameters": [
           {
@@ -405,9 +478,7 @@
     },
     "/api/console/role": {
       "get": {
-        "tags": [
-          "Role"
-        ],
+        "tags": ["Role"],
         "operationId": "Role_ListRole",
         "parameters": [
           {
@@ -449,9 +520,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Role"
-        ],
+        "tags": ["Role"],
         "operationId": "Role_CreateRole",
         "requestBody": {
           "content": {
@@ -479,9 +548,7 @@
     },
     "/api/console/role-all": {
       "get": {
-        "tags": [
-          "Role"
-        ],
+        "tags": ["Role"],
         "operationId": "Role_GetAll",
         "responses": {
           "200": {
@@ -499,9 +566,7 @@
     },
     "/api/console/role/{id}": {
       "get": {
-        "tags": [
-          "Role"
-        ],
+        "tags": ["Role"],
         "operationId": "Role_GetRole",
         "parameters": [
           {
@@ -527,9 +592,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Role"
-        ],
+        "tags": ["Role"],
         "operationId": "Role_UpdateRole",
         "parameters": [
           {
@@ -565,9 +628,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Role"
-        ],
+        "tags": ["Role"],
         "operationId": "Role_DeleteRole",
         "parameters": [
           {
@@ -595,9 +656,7 @@
     },
     "/api/console/role/{id}/permission": {
       "put": {
-        "tags": [
-          "Role"
-        ],
+        "tags": ["Role"],
         "operationId": "Role_BindPermission",
         "parameters": [
           {
@@ -635,9 +694,7 @@
     },
     "/api/console/role/{id}/permission/{permission_id}": {
       "put": {
-        "tags": [
-          "Role"
-        ],
+        "tags": ["Role"],
         "operationId": "Role_UnbindPermission",
         "parameters": [
           {
@@ -683,9 +740,7 @@
     },
     "/api/console/user": {
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "operationId": "User_ListUser",
         "parameters": [
           {
@@ -727,9 +782,7 @@
         }
       },
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "operationId": "User_CreateUser",
         "requestBody": {
           "content": {
@@ -757,9 +810,7 @@
     },
     "/api/console/user/{id}": {
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "operationId": "User_GetUser",
         "parameters": [
           {
@@ -785,9 +836,7 @@
         }
       },
       "put": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "operationId": "User_UpdateUser",
         "parameters": [
           {
@@ -823,9 +872,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "operationId": "User_DeleteUser",
         "parameters": [
           {
@@ -853,9 +900,7 @@
     },
     "/api/console/user/{id}/role": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "operationId": "User_BindRole",
         "parameters": [
           {
@@ -893,9 +938,7 @@
     },
     "/api/console/user/{id}/role/{role_id}": {
       "delete": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "operationId": "User_UnbindRole",
         "parameters": [
           {
@@ -946,7 +989,25 @@
           }
         }
       },
-      "api.console.administration.BindPermissionBodyRequest": {
+      "api.console.administration.BindPermissionReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.administration.BindPermissionRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/api.console.administration.BindPermissionRequest_BindPermissionBody"
+            }
+          }
+        }
+      },
+      "api.console.administration.BindPermissionRequest_BindPermissionBody": {
         "type": "object",
         "properties": {
           "permission_id": {
@@ -962,24 +1023,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/api.console.administration.Action"
-            }
-          }
-        }
-      },
-      "api.console.administration.BindPermissionReply": {
-        "type": "object",
-        "properties": {}
-      },
-      "api.console.administration.BindPermissionRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/api.console.administration.BindPermissionBodyRequest"
             }
           }
         }
@@ -1529,7 +1572,28 @@
       },
       "api.console.passport.RegisterRequest": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "用户名"
+          },
+          "nickname": {
+            "type": "string",
+            "description": "昵称"
+          },
+          "password": {
+            "type": "string",
+            "description": "密码"
+          },
+          "email": {
+            "type": "string",
+            "description": "邮箱"
+          },
+          "captcha": {
+            "type": "string",
+            "description": "验证码"
+          }
+        }
       },
       "api.console.passport.ResetPasswordReply": {
         "type": "object",
@@ -1537,7 +1601,20 @@
       },
       "api.console.passport.ResetPasswordRequest": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "重置密码令牌"
+          },
+          "email": {
+            "type": "string",
+            "description": "邮箱"
+          },
+          "password": {
+            "type": "string",
+            "description": "密码"
+          }
+        }
       },
       "api.console.passport.SendCaptchaReply": {
         "type": "object",
@@ -1545,7 +1622,60 @@
       },
       "api.console.passport.SendCaptchaRequest": {
         "type": "object",
+        "properties": {
+          "type": {
+            "type": "integer",
+            "format": "enum"
+          },
+          "from": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.passport.SendResetPasswordCaptchaReply": {
+        "type": "object",
         "properties": {}
+      },
+      "api.console.passport.SendResetPasswordCaptchaRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.passport.UpdateProfileReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.passport.UpdateProfileRequest": {
+        "type": "object",
+        "properties": {
+          "nickname": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "avatar": {
+            "type": "string"
+          }
+        }
+      },
+      "api.console.passport.UpdateUsernameReply": {
+        "type": "object",
+        "properties": {}
+      },
+      "api.console.passport.UpdateUsernameRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
       },
       "protobuf.Pagination": {
         "type": "object",

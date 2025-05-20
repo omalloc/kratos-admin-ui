@@ -51,9 +51,11 @@ export async function getInitialState(): Promise<InitialState> {
         logout,
       };
     }
+
     throw new Error('token is empty');
   } catch (error) {
     // token 到期了，需要重新登录
+    localStorage.removeItem(APP_TOKEN_KEY);
     history.push('/passport/login');
     return {
       currentUser: undefined,

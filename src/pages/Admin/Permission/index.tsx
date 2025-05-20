@@ -135,6 +135,12 @@ const PermissionPage: React.FC = () => {
             success: true,
           };
         }}
+        rowClassName={(_, index) => {
+          if (index % 2 === 0) {
+            return '';
+          }
+          return 'a-table-row-striped-odd';
+        }}
         toolBarRender={() => [
           <Button key="add" type="primary" onClick={handleAdd}>
             新增权限

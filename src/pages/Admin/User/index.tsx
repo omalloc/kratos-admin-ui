@@ -233,6 +233,12 @@ const UserPage: React.FC = () => {
           };
         }}
         columns={columns}
+        rowClassName={(_, index) => {
+          if (index % 2 === 0) {
+            return '';
+          }
+          return 'a-table-row-striped-odd';
+        }}
       />
 
       <UserModal

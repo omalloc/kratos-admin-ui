@@ -4,7 +4,6 @@ import { mergeData } from '@/utils/pagination';
 import {
   ModalForm,
   PageContainer,
-  ProDescriptions,
   ProForm,
   ProFormGroup,
   ProFormText,
@@ -14,7 +13,7 @@ import {
   type ProColumns,
 } from '@ant-design/pro-components';
 import { useRequest } from '@umijs/max';
-import { App, Button, Col, Empty, Row, Tag, Tooltip } from 'antd';
+import { App, Button, Col, Descriptions, Empty, Row, Tag, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 
 interface DataAccess {
@@ -141,22 +140,21 @@ const expandedRowRender = (record: API.RoleInfo, permissionMap: Record<string, R
   }
 
   return (
-    <ProDescriptions style={{ marginLeft: '48px' }} column={{ sm: 1, md: 1, lg: 1, xl: 2 }} title="已授权的模块权限">
+    <Descriptions key={record.id} style={{ marginLeft: '48px' }} column={2} title="已授权的模块权限">
       {record.permissions.map((item: API.RolePermission) => {
         if (!item.perm_id) {
           return null;
         }
         const perm = permissionMap[item.perm_id];
-
         return (
-          <ProDescriptions.Item key={item.id} label={<Tooltip title={perm.name}>{perm.alias}</Tooltip>}>
+          <Descriptions.Item key={item.perm_id} label={<Tooltip title={perm.name}>{perm.alias}</Tooltip>}>
             {item.actions!.map((action) => (
               <Tag key={action.key}>{action.describe}</Tag>
             ))}
-          </ProDescriptions.Item>
+          </Descriptions.Item>
         );
       })}
-    </ProDescriptions>
+    </Descriptions>
   );
 };
 
@@ -232,7 +230,13 @@ const RolePage: React.FC = () => {
             success: true,
           };
         }}
-        expandable={{ expandedRowRender: (record) => expandedRowRender(record, permissionMap) }}
+        rowClassName={(_, index) => {
+          if (index % 2 === 0) {
+            return '';
+          }
+          return 'a-table-row-striped-odd';
+        }}
+        expandable={{ expandRowByClick: true, expandedRowRender: (record) => expandedRowRender(record, permissionMap) }}
         toolBarRender={() => {
           return [
             <Button key="add" type="primary" onClick={handleAdd}>

@@ -5,6 +5,10 @@ declare namespace API {
     checked?: boolean;
   };
 
+  type AuthorizeMenuReply = {
+    data?: MenuInfo[];
+  };
+
   type BindPermissionReply = {};
 
   type BindPermissionRequest = {
@@ -23,6 +27,21 @@ declare namespace API {
   type BindRoleRequest = {
     id?: string;
     role_id?: string;
+  };
+
+  type CreateMenuReply = {
+    id?: string;
+  };
+
+  type CreateMenuRequest = {
+    pid?: string;
+    permission_id?: string;
+    name?: string;
+    icon?: string;
+    path?: string;
+    sort_by?: string;
+    hidden?: boolean;
+    status?: number;
   };
 
   type CreatePermissionReply = {};
@@ -63,6 +82,8 @@ declare namespace API {
     roles?: RoleInfo[];
   };
 
+  type DeleteMenuReply = {};
+
   type DeletePermissionReply = {};
 
   type DeleteRoleReply = {};
@@ -71,6 +92,10 @@ declare namespace API {
 
   type GetAllReply = {
     data?: RoleInfo[];
+  };
+
+  type GetMenuReply = {
+    data?: MenuInfo;
   };
 
   type GetPermissionReply = {
@@ -100,6 +125,11 @@ declare namespace API {
 
   type ListAllPermissionReply = {
     data?: PermissionInfo[];
+  };
+
+  type ListMenuReply = {
+    data?: MenuInfo[];
+    pagination?: Pagination;
   };
 
   type ListPermissionReply = {
@@ -132,10 +162,48 @@ declare namespace API {
 
   type LogoutRequest = {};
 
+  type MenuDeleteMenuParams = {
+    id: string;
+  };
+
+  type MenuGetMenuParams = {
+    id: string;
+  };
+
+  type MenuInfo = {
+    id?: string;
+    pid?: string;
+    permission_id?: string;
+    name?: string;
+    icon?: string;
+    path?: string;
+    sort_by?: string;
+    hidden?: boolean;
+    status?: number;
+    created_at?: string;
+    updated_at?: string;
+  };
+
+  type MenuListMenuParams = {
+    'pagination.page'?: number;
+    'pagination.page_size'?: number;
+    'pagination.total'?: number;
+    name?: string;
+    status?: number;
+  };
+
+  type MenuUpdateMenuParams = {
+    id: string;
+  };
+
   type Pagination = {
     page?: number;
     page_size?: number;
     total?: number;
+  };
+
+  type PassportAuthorizeMenuParams = {
+    user_id?: string;
   };
 
   type PassportUpdateUsernameParams = {
@@ -270,6 +338,20 @@ declare namespace API {
   };
 
   type UnbindRoleReply = {};
+
+  type UpdateMenuReply = {};
+
+  type UpdateMenuRequest = {
+    id?: string;
+    pid?: string;
+    permission_id?: string;
+    name?: string;
+    icon?: string;
+    path?: string;
+    sort_by?: string;
+    hidden?: boolean;
+    status?: number;
+  };
 
   type UpdatePermissionReply = {};
 

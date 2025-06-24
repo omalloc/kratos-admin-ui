@@ -1,9 +1,10 @@
-import { passportCurrentUser } from '@/services/console/passport';
+import { passportAuthorizeMenu, passportCurrentUser } from '@/services/console/passport';
 import { history, RunTimeLayoutConfig, type RequestConfig } from '@umijs/max';
 import { App } from 'antd';
 import RightContent from './components/RightContent';
 import { APP_TOKEN_KEY } from './constants';
 import { CurrentUser, InitialState } from './typing';
+import { listToTree } from './utils/menu';
 
 // 运行时配置
 export const request: RequestConfig = {
@@ -66,6 +67,7 @@ export async function getInitialState(): Promise<InitialState> {
     };
   }
 }
+
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
     logo: '/logo.svg',
@@ -83,9 +85,17 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     collapsedButtonRender: false,
     siderWidth: 180, // ignored prop.
     contentWidth: 'Fluid',
-    iconfontUrl: '//at.alicdn.com/t/c/font_4221036_c2wl4klxsj.js',
+    iconfontUrl: '//at.alicdn.com/t/c/font_4221036_w49cm25y52.js',
     menu: {
       locale: false,
+      params: {
+        userId: initialState?.currentUser?.user.id,
+      },
+      request: async (params, defaultMenuData) => {
+        // initialState.currentUser 中包含了所有用户信息
+        const res = await passportAuthorizeMenu({});
+        return listToTree(res.data);
+      },
     },
     token: {},
     appList: [],

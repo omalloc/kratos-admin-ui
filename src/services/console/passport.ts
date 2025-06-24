@@ -21,6 +21,21 @@ export async function passportUpdateUsername(
   });
 }
 
+/** 获取授权的菜单 GET /api/console/passport/authorize_menu */
+export async function passportAuthorizeMenu(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.PassportAuthorizeMenuParams,
+  options?: { [key: string]: any },
+) {
+  return request<API.AuthorizeMenuReply>('/api/console/passport/authorize_menu', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** 获取当前用户信息 GET /api/console/passport/current */
 export async function passportCurrentUser(options?: { [key: string]: any }) {
   return request<API.CurrentUserReply>('/api/console/passport/current', {

@@ -46,7 +46,25 @@ export default [
           permission: ['permission'],
         },
       },
+      {
+        path: '/admin/menu',
+        name: '菜单',
+        icon: 'menu',
+        component: './Admin/Menu',
+        access: 'routeFilter',
+        meta: {
+          permission: ['menu'],
+        },
+      },
     ],
+  },
+
+  // 测试
+  {
+    path: '/test',
+    name: '测试',
+    icon: 'icon-dashboard',
+    component: './404',
   },
 
   // Passport

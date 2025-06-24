@@ -3,7 +3,7 @@ import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { history } from '@umijs/max';
 import { Button } from 'antd';
 import { createStyles } from 'antd-style';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const useStyles = createStyles(({ token }) => ({
   actions: {
@@ -17,11 +17,26 @@ const ResetPassword: React.FC = () => {
   const { styles } = useStyles();
   const [waiting, setWaiting] = useState<number>(0);
 
-  setInterval(() => {
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
     if (waiting > 0) {
-      setWaiting(waiting - 1);
+      interval = setInterval(() => {
+        setWaiting((prevWaiting) => {
+          if (prevWaiting > 0) {
+            return prevWaiting - 1;
+          }
+          return 0;
+        });
+      }, 1000);
     }
-  }, 1000);
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [waiting]);
 
   return (
     <LoginForm

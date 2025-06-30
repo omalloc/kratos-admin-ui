@@ -1,7 +1,7 @@
 import { passportSendResetPassword } from '@/services/console/passport';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { history } from '@umijs/max';
-import { Button } from 'antd';
+import { App, Button } from 'antd';
 import { createStyles } from 'antd-style';
 import { useState, useEffect } from 'react';
 
@@ -15,6 +15,7 @@ const useStyles = createStyles(({ token }) => ({
 
 const ResetPassword: React.FC = () => {
   const { styles } = useStyles();
+  const { message } = App.useApp();
   const [waiting, setWaiting] = useState<number>(0);
 
   useEffect(() => {
@@ -54,14 +55,33 @@ const ResetPassword: React.FC = () => {
       }}
       onFinish={async (values) => {
         console.log('提交重置密码信息', values);
-        const res = await passportSendResetPassword({
-          email: values.email,
-        });
+        try {
+          const res = await passportSendResetPassword({
+            email: values.email,
+          });
 
-        localStorage.setItem(`${values.email}-reset_at`, new Date().toISOString());
-        setWaiting(60);
+          localStorage.setItem(`${values.email}-reset_at`, new Date().toISOString());
+          setWaiting(60);
+          message.success('验证码已发送到您的邮箱，请注意查收');
 
-        console.log('重置密码验证码发送结果', res);
+          console.log('重置密码验证码发送结果', res);
+          return true;
+        } catch (err: any) {
+          console.error('发送验证码失败', err);
+          let errorMessage = '发送验证码失败，请稍后重试';
+          if (err?.response?.data?.message) {
+            // 服务器返回的错误信息
+            errorMessage = err.response.data.message;
+          } else if (err?.data?.message) {
+            // 直接返回的错误信息
+            errorMessage = err.data.message;
+          } else if (err?.message) {
+            // 其他错误信息
+            errorMessage = err.message;
+          }
+          message.error(errorMessage, 3);
+          return false;
+        }
       }}
     >
       <ProFormText

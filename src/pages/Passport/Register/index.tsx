@@ -27,7 +27,18 @@ const Register: React.FC = () => {
             return true;
           } catch (err: any) {
             console.error('注册失败', err);
-            message.error('注册失败');
+            let errorMessage = '注册失败，请检查输入信息';
+            if (err?.response?.data?.message) {
+              // 服务器返回的错误信息
+              errorMessage = err.response.data.message;
+            } else if (err?.data?.message) {
+              // 直接返回的错误信息
+              errorMessage = err.data.message;
+            } else if (err?.message) {
+              // 其他错误信息
+              errorMessage = err.message;
+            }
+            message.error(errorMessage, 3);
             return false;
           }
         }}

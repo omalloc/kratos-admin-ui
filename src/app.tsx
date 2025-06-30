@@ -24,6 +24,45 @@ export const request: RequestConfig = {
       return response;
     },
   ],
+  errorConfig: {
+    // 错误抛出
+    errorThrower: (res: any) => {
+      const { success, data, errorCode, errorMessage, showType } = res;
+      if (!success) {
+        const error: any = new Error(errorMessage);
+        error.name = 'BizError';
+        error.info = { errorCode, errorMessage, showType, data };
+        throw error;
+      }
+    },
+    // 错误处理
+    errorHandler: (error: any, opts: any) => {
+      if (opts?.skipErrorHandler) throw error;
+      // 我们的 errorThrower 抛出的错误。
+      if (error.name === 'BizError') {
+        const errorInfo: any = error.info;
+        if (errorInfo.errorMessage) {
+          // 这里可以添加全局的错误提示
+          console.error('请求错误:', errorInfo.errorMessage);
+        }
+      } else if (error.response) {
+        // Axios 的错误
+        // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
+        const errorData = error.response.data;
+        if (errorData?.message) {
+          console.error('响应错误:', errorData.message);
+        } else {
+          console.error('响应错误:', error.response.status, error.response.data);
+        }
+      } else if (error.request) {
+        // 请求已经成功发起，但没有收到响应
+        console.error('请求错误:', error.request);
+      } else {
+        // 发送请求时出了点问题
+        console.error('请求配置错误:', error.message);
+      }
+    },
+  },
 };
 
 // 全局初始化数据配置，用于 Layout 用户信息和权限初始化

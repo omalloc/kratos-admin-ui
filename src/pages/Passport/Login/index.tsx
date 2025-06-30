@@ -1,4 +1,5 @@
 import * as passportService from '@/services/console/passport';
+import { APP_TOKEN_KEY } from '@/constants';
 import { LockOutlined, MobileOutlined, UserOutlined, WeiboCircleOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText, setAlpha } from '@ant-design/pro-components';
 import { history, useModel } from '@umijs/max';
@@ -47,7 +48,7 @@ const Login: React.FC = () => {
                   console.log('响应拦截器', config);
                   const { authorization } = config.headers;
                   if (authorization) {
-                    localStorage.setItem('token', authorization);
+                    localStorage.setItem(APP_TOKEN_KEY, authorization);
                     refresh();
                   }
                   return config;
@@ -60,7 +61,38 @@ const Login: React.FC = () => {
           return true;
         } catch (err: any) {
           console.log('登录失败', err);
-          message.info('登录失败', err);
+          let errorMessage = '登录失败，请检查用户名和密码';
+          
+          if (err?.response?.data?.message && err.response.data.message.trim()) {
+            errorMessage = err.response.data.message;
+          } else if (err?.data?.message && err.data.message.trim()) {
+            errorMessage = err.data.message;
+          } else if (err?.message && err.message.trim()) {
+            errorMessage = err.message;
+          } else if (err?.response?.status) {
+            const status = err.response.status;
+            switch (status) {
+              case 400:
+                errorMessage = '请求参数错误';
+                break;
+              case 401:
+                errorMessage = '用户名或密码错误';
+                break;
+              case 403:
+                errorMessage = '没有权限访问';
+                break;
+              case 404:
+                errorMessage = '请求的资源不存在';
+                break;
+              case 500:
+                errorMessage = '服务器内部错误';
+                break;
+              default:
+                errorMessage = `请求失败 (${status})`;
+            }
+          }
+          
+          message.error(errorMessage, 3);
           return false;
         }
       }}

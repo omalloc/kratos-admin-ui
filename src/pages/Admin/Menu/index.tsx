@@ -1,7 +1,7 @@
 import ProFormIconSelect from '@/components/IconSelect';
 import useRoleList from '@/models/global';
 import { menuCreateMenu, menuDeleteMenu, menuListMenu, menuUpdateMenu } from '@/services/console/menu';
-import { createFromIconfontCN, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { createFromIconfontCN, PlusOutlined } from '@ant-design/icons';
 import {
   ActionType,
   ModalForm,
@@ -185,6 +185,8 @@ const MenuPage: React.FC = () => {
   const [selectedMenuId, setSelectedMenuId] = useState<string>('0'); // 默认为根菜单ID '0'
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<string[]>(['0']);
+  const [menuModalType, setMenuModalType] = useState<'create' | 'edit'>('create');
+  const [selectedMenu, setSelectedMenu] = useState<API.MenuInfo | null>(null);
 
   const { message } = App.useApp();
 
@@ -192,7 +194,10 @@ const MenuPage: React.FC = () => {
 
   // 组装菜单列表和树
   const { data: menuList } = useRequest<API.MenuInfo[]>(async () => {
-    const { data = [] } = await menuListMenu({});
+    const { data = [] } = await menuListMenu({
+      'pagination.page': 1,
+      'pagination.page_size': 1000, // 获取所有菜单
+    });
     return {
       data,
     };
@@ -207,7 +212,7 @@ const MenuPage: React.FC = () => {
     [menuList],
   );
 
-  const currentMenuList = useMemo(() => menuTreeMap[selectedMenuId] || [], [selectedMenuId]);
+  const currentMenuList = useMemo(() => menuTreeMap[selectedMenuId] || [], [selectedMenuId, menuTreeMap]);
 
   // 处理菜单选择
   const handleSelect = (keyPath: string[]) => {
@@ -250,7 +255,10 @@ const MenuPage: React.FC = () => {
           message.success('更新成功');
         }
       }
-      setMenuModalVisible(false);
+      setVisible(false);
+      // 清空选中的菜单
+      setSelectedMenu(null);
+      // 重新获取菜单列表
       if (actionRef.current) {
         actionRef.current.reload();
       }
@@ -320,6 +328,8 @@ const MenuPage: React.FC = () => {
         <a
           key="edit"
           onClick={() => {
+            setSelectedMenu(record);
+            setMenuModalType('edit');
             setVisible(true);
           }}
         >
@@ -348,24 +358,27 @@ const MenuPage: React.FC = () => {
         rowKey="id"
         search={false}
         size="small"
+        request={async () => {
+          const { data = [] } = await menuListMenu({
+            'pagination.page': 1,
+            'pagination.page_size': 1000, // 获取所有菜单
+          });
+          return {
+            data,
+            success: true,
+          };
+        }}
         toolBarRender={() => [
           <Button
             key="add"
             type="primary"
             onClick={() => {
+              setSelectedMenu(null);
+              setMenuModalType('create');
               setVisible(true);
             }}
           >
             <PlusOutlined /> 新建
-          </Button>,
-          <Button
-            key="edit"
-            type="link"
-            onClick={() => {
-              setVisible(true);
-            }}
-          >
-            <EditOutlined /> 修改
           </Button>,
         ]}
         columns={columns}
@@ -374,19 +387,28 @@ const MenuPage: React.FC = () => {
       />
 
       <ModalForm
-        title="菜单操作"
+        key={selectedMenu?.id || 'create'}
+        title={menuModalType === 'create' ? '新建菜单' : '编辑菜单'}
         open={visible}
-        onOpenChange={setVisible}
+        onOpenChange={(open) => {
+          setVisible(open);
+          if (!open) {
+            // 关闭模态框时清空选中的菜单
+            setSelectedMenu(null);
+          }
+        }}
         onValuesChange={(values) => {
           if (values['pid']) {
             console.log('pid', values['pid']);
           }
         }}
-        initialValues={{
-          icon: 'icon-earth',
-          sort_by: 1,
-          status: 0,
-        }}
+        initialValues={
+          selectedMenu || {
+            icon: 'icon-earth',
+            sort_by: 1,
+            status: 0,
+          }
+        }
         onFinish={async (values) => {
           console.log('values', values);
 
@@ -397,6 +419,14 @@ const MenuPage: React.FC = () => {
               await menuCreateMenu(values);
             }
             message.success('操作成功');
+            // 关闭模态框
+            setVisible(false);
+            // 清空选中的菜单
+            setSelectedMenu(null);
+            // 重新获取菜单列表
+            if (actionRef.current) {
+              actionRef.current.reload();
+            }
             return true;
           } catch (error) {
             console.error(error);

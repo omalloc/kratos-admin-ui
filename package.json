@@ -35,6 +35,7 @@
     "prettier-plugin-packagejson": "^2.4.3",
     "rc-menu": "^9.16.1",
     "swagger-ui-dist": "^5.21.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
     "umi-presets-pro": "^2.0.3"
   }

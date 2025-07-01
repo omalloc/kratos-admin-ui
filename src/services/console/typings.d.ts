@@ -300,6 +300,8 @@ declare namespace API {
     role_id?: string;
     /** 权限id */
     perm_id?: string;
+    /** 权限名称 */
+    name?: string;
     /** 操作权限 */
     actions?: Action[];
     /** 数据权限 */

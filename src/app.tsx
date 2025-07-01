@@ -131,9 +131,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         userId: initialState?.currentUser?.user.id,
       },
       request: async (params, defaultMenuData) => {
+        console.log('menu.params', params);
         // initialState.currentUser 中包含了所有用户信息
-        const res = await passportAuthorizeMenu({});
-        return listToTree(res.data);
+        const { data = [] } = await passportAuthorizeMenu({});
+        return listToTree(data);
       },
     },
     token: {},

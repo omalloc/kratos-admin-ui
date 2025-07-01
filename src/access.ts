@@ -4,12 +4,35 @@ export default (initialState: InitialState) => {
   // 在这里按照初始化数据定义项目中的权限，统一管理
   // 参考文档 https://umijs.org/docs/max/access
   // const canSeeAdmin = !!(initialState && initialState.currentUser);
+  const { currentUser } = initialState;
+  if (!currentUser) {
+    return {
+      doAction: () => true,
+      routeFilter: () => true,
+    };
+  }
 
-  const routeAccessMap =
-    initialState.currentUser?.roles?.reduce<Record<string, API.RoleInfo>>((kv, item) => {
-      kv[item.name!.toLowerCase()] = item;
+  // 合并用户角色的 permissions
+  const permissions = currentUser.roles.flatMap((item: API.RoleInfo) => {
+    return item.permissions;
+  });
+
+  const routeAccessMap = permissions.reduce<Record<string, { name: string; actions: string[] }>>((kv, item) => {
+    if (!item) {
       return kv;
-    }, {}) || {};
+    }
+    const key = item.name?.toLowerCase();
+    if (!key) {
+      return kv;
+    }
+
+    const { actions } = kv[key] || { actions: [] };
+    kv[key] = {
+      name: item.name!,
+      actions: [...(item.actions?.map((action) => action?.key?.toLowerCase() || '') || []), ...actions].filter(Boolean),
+    };
+    return kv;
+  }, {});
 
   return {
     doAction: (action: string) => {
@@ -18,13 +41,13 @@ export default (initialState: InitialState) => {
     },
     routeFilter: (route: any) => {
       // 放行 (redirect)
-      if (route.redirect !== '') {
+      if (route.redirect && route.redirect !== '') {
         return true;
       }
 
       // 放行没配置权限的路由
-      const { permission } = route.meta || {};
-      if (permission) {
+      const { permission = [] } = route.meta || {};
+      if (permission === undefined || permission.length === 0) {
         return true;
       }
 

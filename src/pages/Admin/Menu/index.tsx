@@ -8,7 +8,6 @@ import {
   ProCard,
   ProFormDigit,
   ProFormGroup,
-  ProFormRadio,
   ProFormSegmented,
   ProFormSelect,
   ProFormText,
@@ -63,9 +62,9 @@ const mapTreeData = (dataSource?: API.MenuInfo[]): TreeSelectProps['treeData'] =
   const toTreeData = (parentId: string = '0'): TreeSelectProps['treeData'] => {
     const children = mapping[parentId] || [];
     return children.map((node) => ({
-      value: node.id!,
+      value: node.uid!,
       title: node.name!,
-      children: toTreeData(node.id!),
+      children: toTreeData(node.uid!),
     }));
   };
 
@@ -77,17 +76,17 @@ const collectTreeNodes = (dataSource: API.MenuInfo[], parentId: string = '0'): T
   return dataSource
     .filter((menu) => menu.pid === parentId)
     .map((menu) => {
-      const children = collectTreeNodes(dataSource, menu.id);
+      const children = collectTreeNodes(dataSource, menu.uid);
       if (children.length > 0) {
         return {
-          key: menu.id as string,
+          key: menu.uid as string,
           title: <NodeTitle title={menu.name!} icon={menu.icon!} />,
           children,
         } as TreeNodeProps;
       }
 
       return {
-        key: menu.id as string,
+        key: menu.uid as string,
         title: <NodeTitle title={menu.name!} icon={menu.icon!} />,
         children: [],
       } as TreeNodeProps;
@@ -161,7 +160,7 @@ const MenuPage: React.FC = () => {
   const [selectedMenuId, setSelectedMenuId] = useState<string>('0'); // 默认为根菜单ID '0'
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<string[]>(['root']);
-  const { permissionMap } = useModel('global');
+  const { permissionMap } = useModel('permission');
 
   // 组装菜单列表和树
   const { data: menuList } = useRequest<{ data: API.MenuInfo[] }>(async () => {
@@ -208,9 +207,9 @@ const MenuPage: React.FC = () => {
   );
 
   // 删除菜单
-  const handleDeleteMenu = async (id: string) => {
+  const handleDeleteMenu = async (uid: string) => {
     try {
-      await menuDeleteMenu({ id });
+      await menuDeleteMenu({ uid });
       message.success('删除成功');
       if (actionRef.current) {
         actionRef.current.reload();
@@ -253,8 +252,8 @@ const MenuPage: React.FC = () => {
       dataIndex: 'status',
       width: 80,
       valueEnum: {
-        0: { text: '启用', status: 'Success' },
-        1: { text: '禁用', status: 'Error' },
+        1: { text: '启用', status: 'Success' },
+        2: { text: '禁用', status: 'Error' },
       },
     },
     {
@@ -275,7 +274,7 @@ const MenuPage: React.FC = () => {
         <Popconfirm
           key="delete"
           title="确定要删除这个菜单吗?"
-          onConfirm={() => handleDeleteMenu(record.id!)}
+          onConfirm={() => handleDeleteMenu(record.uid!)}
           okText="是"
           cancelText="否"
         >
@@ -292,16 +291,13 @@ const MenuPage: React.FC = () => {
           minHeight: '500px',
         }}
         actionRef={actionRef}
-        rowKey="id"
+        rowKey="uid"
         search={false}
         size="small"
-        request={async () => {
-          const { data = [] } = await menuListMenu({
-            'pagination.page': 1,
-            'pagination.page_size': 1000, // 获取所有菜单
-          });
+        pagination={false}
+        request={async (params) => {
           return {
-            data,
+            data: menuList,
             success: true,
           };
         }}
@@ -327,27 +323,25 @@ const MenuPage: React.FC = () => {
         tableRender={tableRender}
       />
 
-      <ModalForm
-        title={formData.id === undefined ? '新建菜单' : '编辑菜单'}
+      <ModalForm<API.MenuInfo>
+        title={formData.uid === undefined ? '新建菜单' : '编辑菜单'}
         open={visible}
         onOpenChange={setVisible}
         params={formData}
         request={async (params) => {
-          if (params.id) {
-            const { data } = await menuGetMenu({ id: params.id });
+          if (params.uid) {
+            const { data = {} } = await menuGetMenu({ uid: params.uid });
             return data;
           }
 
-          return {
-            ...params,
-          };
+          return {};
         }}
         onFinish={async (values = {}) => {
           console.log('values', values);
 
           try {
-            if (values.id) {
-              await menuUpdateMenu({ id: values.id }, values);
+            if (values.uid) {
+              await menuUpdateMenu({ uid: values.uid }, values);
             } else {
               await menuCreateMenu(values);
             }
@@ -368,15 +362,15 @@ const MenuPage: React.FC = () => {
         grid={true}
         layout="vertical"
       >
-        <ProFormText name="id" hidden />
+        <ProFormText name="uid" hidden />
         <ProFormGroup>
           <ProFormTreeSelect name="pid" label="父级菜单名称" request={async () => treeData} colProps={{ span: 18 }} />
           <ProFormSelect
             name="permission_id"
             label="授权"
-            options={[{ name: '-', alias: '任意', id: '0' }, ...Object.values(permissionMap)].map((item) => ({
+            options={[{ name: '-', alias: '任意', uid: '0' }, ...Object.values(permissionMap)].map((item) => ({
               label: `${item.alias}(${item.name})`,
-              value: item.id,
+              value: item.uid,
             }))}
             colProps={{ span: 6 }}
           />
@@ -418,14 +412,18 @@ const MenuPage: React.FC = () => {
                   />
                   <ProFormSegmented
                     name="hidden"
-                    label="不在菜单显示"
-                    valueEnum={{ 0: '显示', 1: '隐藏' }}
+                    label="是否在菜单显示"
+                    valueEnum={{ '1': '显示', '2': '隐藏' }}
                     colProps={{ span: 6 }}
+                    convertValue={(value) => (value ? '2' : '1')}
+                    transform={(value) => (value === 1 ? true : false)}
                   />
-                  <ProFormRadio.Group
+                  <ProFormSegmented
                     name="status"
-                    label="状态"
-                    valueEnum={{ 0: '显示', 1: '隐藏' }}
+                    label="可用状态"
+                    valueEnum={{ 1: '启用', 2: '禁用' }}
+                    convertValue={(value) => (value ? '1' : '2')}
+                    transform={(value) => (value === 1 ? true : false)}
                     colProps={{ span: 6 }}
                   />
                 </ProFormGroup>

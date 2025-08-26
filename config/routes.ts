@@ -11,6 +11,10 @@ export default [
     path: '/admin',
     name: '系统管理',
     icon: 'icon-config',
+    access: 'routeFilter',
+    meta: {
+      permission: ['system'],
+    },
     routes: [
       {
         path: '',
@@ -56,7 +60,24 @@ export default [
           permission: ['menu'],
         },
       },
+      {
+        path: '/admin/crontab',
+        name: '定时任务',
+        icon: 'schedule',
+        component: './Admin/Crontab',
+        access: 'routeFilter',
+        meta: {
+          permission: ['crontab'],
+        },
+      },
     ],
+  },
+
+  {
+    path: '/todo',
+    name: '待办事项',
+    icon: 'icon-dashboard',
+    component: './Todo',
   },
 
   // 测试
@@ -87,6 +108,17 @@ export default [
         name: '重置密码',
         path: '/passport/reset-password',
         component: './Passport/ResetPassword',
+      },
+    ],
+  },
+  {
+    path: '/account',
+    hideInMenu: true,
+    routes: [
+      {
+        path: '/account/setting',
+        name: '设置',
+        component: './Account/Setting',
       },
     ],
   },

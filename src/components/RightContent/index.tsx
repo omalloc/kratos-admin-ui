@@ -2,9 +2,9 @@ import { MoonOutlined, QuestionCircleOutlined, SunOutlined } from '@ant-design/i
 import { useModel } from '@umijs/max';
 import { createStyles } from 'antd-style';
 import React, { type CSSProperties } from 'react';
+import { FontIcon } from '../IconSelect';
 import Avatar from './AvatarDropdown';
-
-export type SiderTheme = 'light' | 'dark';
+import HeaderDropdown from './HeaderDropdown';
 
 const useStyles = createStyles(({ token }) => ({
   root: {
@@ -62,8 +62,60 @@ const GlobalHeaderRight: React.FC<{ style?: CSSProperties }> = (props) => {
       >
         {initialState?.settings?.theme === 'light' ? <MoonOutlined /> : <SunOutlined />}
       </span>
+      <HeaderDropdown
+        placement="topRight"
+        menu={{
+          selectedKeys: [],
+          onClick: (event) => {
+            console.log('onClick event', event);
+            setInitialState((state: any) => ({
+              ...state,
+              settings: {
+                ...state?.settings,
+                colorPrimary: event.key,
+              },
+            }));
+          },
+          items: [
+            {
+              key: '#f5222d',
+              label: 'Dust Red',
+            },
+            {
+              key: '#ff7a45',
+              label: 'Volcano',
+            },
+            {
+              key: '#ffa940',
+              label: 'Sunset Orange',
+            },
+            {
+              key: '#36cfc9',
+              label: 'Cyan',
+            },
+            {
+              key: '#73d13d',
+              label: 'Polar Green',
+            },
+            {
+              key: '#597ef7',
+              label: 'Geek Blue',
+            },
+            {
+              key: '#9254de',
+              label: 'Golden Purple',
+            },
+          ],
+        }}
+      >
+        <span className={styles.action}>
+          <FontIcon type="icon-theme" style={{ fontSize: 16 }} />
+        </span>
+      </HeaderDropdown>
       <Avatar menu={true} />
     </div>
   );
 };
 export default GlobalHeaderRight;
+
+export type SiderTheme = 'light' | 'dark';

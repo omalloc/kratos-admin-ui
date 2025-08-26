@@ -35,7 +35,7 @@ export async function userGetUser(
   params: API.UserGetUserParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.GetUserReply>(`/api/console/user/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
@@ -50,7 +50,7 @@ export async function userUpdateUser(
   body: API.UpdateUserRequest,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.UpdateUserReply>(`/api/console/user/${param0}`, {
     method: 'PUT',
     headers: {
@@ -68,7 +68,7 @@ export async function userDeleteUser(
   params: API.UserDeleteUserParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.DeleteUserReply>(`/api/console/user/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
@@ -83,7 +83,7 @@ export async function userBindRole(
   body: API.BindRoleRequest,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.BindRoleReply>(`/api/console/user/${param0}/role`, {
     method: 'POST',
     headers: {
@@ -101,7 +101,7 @@ export async function userUnbindRole(
   params: API.UserUnbindRoleParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, role_id: param1, ...queryParams } = params;
+  const { uid: param0, role_id: param1, ...queryParams } = params;
   return request<API.UnbindRoleReply>(`/api/console/user/${param0}/role/${param1}`, {
     method: 'DELETE',
     params: { ...queryParams },

@@ -12,7 +12,7 @@ declare namespace API {
   type BindPermissionReply = {};
 
   type BindPermissionRequest = {
-    id?: string;
+    uid?: string;
     data?: BindPermissionRequestBindPermissionBody[];
   };
 
@@ -25,12 +25,25 @@ declare namespace API {
   type BindRoleReply = {};
 
   type BindRoleRequest = {
-    id?: string;
+    uid?: string;
     role_id?: string;
   };
 
+  type CreateCrontabReply = {};
+
+  type CreateCrontabRequest = {
+    /** 任务名称 */
+    name?: string;
+    /** 任务表达式 */
+    expr?: string;
+    /** 任务动作 */
+    action?: string;
+    /** 任务描述 */
+    describe?: string;
+  };
+
   type CreateMenuReply = {
-    id?: string;
+    uid?: string;
   };
 
   type CreateMenuRequest = {
@@ -64,7 +77,7 @@ declare namespace API {
   };
 
   type CreateUserReply = {
-    id?: string;
+    uid?: string;
   };
 
   type CreateUserRequest = {
@@ -73,14 +86,51 @@ declare namespace API {
     email?: string;
     password?: string;
     re_password?: string;
-    disabled?: boolean;
+    status?: number;
     role_ids?: string[];
+  };
+
+  type CrontabDeleteCrontabParams = {
+    uid: string;
+  };
+
+  type CrontabGetCrontabParams = {
+    uid: string;
+  };
+
+  type CrontabInfo = {
+    uid?: string;
+    /** 任务名称 */
+    name?: string;
+    /** 任务表达式 */
+    expr?: string;
+    /** 任务动作 */
+    action?: string;
+    /** 任务描述 */
+    describe?: string;
+    /** 上次执行时间 */
+    last_run_at?: string;
+    created_at?: string;
+    updated_at?: string;
+  };
+
+  type CrontabListCrontabParams = {
+    'pagination.page'?: number;
+    'pagination.page_size'?: number;
+    'pagination.total'?: number;
+  };
+
+  type CrontabUpdateCrontabParams = {
+    uid: string;
   };
 
   type CurrentUserReply = {
     user?: UserInfo;
     roles?: RoleInfo[];
+    allow_menus?: MenuInfo[];
   };
+
+  type DeleteCrontabReply = {};
 
   type DeleteMenuReply = {};
 
@@ -94,12 +144,16 @@ declare namespace API {
     data?: RoleInfo[];
   };
 
+  type GetCrontabReply = {
+    data?: CrontabInfo;
+  };
+
   type GetMenuReply = {
     data?: MenuInfo;
   };
 
   type GetPermissionReply = {
-    id?: string;
+    uid?: string;
     name?: string;
     alias?: string;
     describe?: string;
@@ -108,7 +162,7 @@ declare namespace API {
   };
 
   type GetRoleReply = {
-    id?: string;
+    uid?: string;
     name?: string;
     alias?: string;
     describe?: string;
@@ -125,6 +179,11 @@ declare namespace API {
 
   type ListAllPermissionReply = {
     data?: PermissionInfo[];
+  };
+
+  type ListCrontabReply = {
+    pagination?: Pagination;
+    data?: CrontabInfo[];
   };
 
   type ListMenuReply = {
@@ -163,15 +222,15 @@ declare namespace API {
   type LogoutRequest = {};
 
   type MenuDeleteMenuParams = {
-    id: string;
+    uid: string;
   };
 
   type MenuGetMenuParams = {
-    id: string;
+    uid: string;
   };
 
   type MenuInfo = {
-    id?: string;
+    uid?: string;
     pid?: string;
     permission_id?: string;
     name?: string;
@@ -193,7 +252,7 @@ declare namespace API {
   };
 
   type MenuUpdateMenuParams = {
-    id: string;
+    uid: string;
   };
 
   type Pagination = {
@@ -211,18 +270,19 @@ declare namespace API {
   };
 
   type PermissionDeletePermissionParams = {
-    id: string;
+    uid: string;
   };
 
   type PermissionGetPermissionParams = {
-    id: string;
+    uid: string;
   };
 
   type PermissionInfo = {
-    id?: string;
+    uid?: string;
     name?: string;
     alias?: string;
     describe?: string;
+    allow_delete?: boolean;
     actions?: Action[];
     status?: number;
   };
@@ -237,7 +297,7 @@ declare namespace API {
   };
 
   type PermissionUpdatePermissionParams = {
-    id: string;
+    uid: string;
   };
 
   type RegisterReply = {};
@@ -267,19 +327,19 @@ declare namespace API {
   };
 
   type RoleBindPermissionParams = {
-    id: string;
+    uid: string;
   };
 
   type RoleDeleteRoleParams = {
-    id: string;
+    uid: string;
   };
 
   type RoleGetRoleParams = {
-    id: string;
+    uid: string;
   };
 
   type RoleInfo = {
-    id?: string;
+    uid?: string;
     name?: string;
     alias?: string;
     describe?: string;
@@ -294,8 +354,6 @@ declare namespace API {
   };
 
   type RolePermission = {
-    /** 业务id */
-    id?: string;
     /** 角色id */
     role_id?: string;
     /** 权限id */
@@ -311,12 +369,12 @@ declare namespace API {
   };
 
   type RoleUnbindPermissionParams = {
-    id: string;
+    uid: string;
     permission_id: string;
   };
 
   type RoleUpdateRoleParams = {
-    id: string;
+    uid: string;
   };
 
   type SendCaptchaReply = {};
@@ -335,16 +393,30 @@ declare namespace API {
   type UnbindPermissionReply = {};
 
   type UnbindPermissionRequest = {
-    id?: string;
+    uid?: string;
     permission_id?: string;
   };
 
   type UnbindRoleReply = {};
 
+  type UpdateCrontabReply = {};
+
+  type UpdateCrontabRequest = {
+    uid?: string;
+    /** 任务名称 */
+    name?: string;
+    /** 任务表达式 */
+    expr?: string;
+    /** 任务动作 */
+    action?: string;
+    /** 任务描述 */
+    describe?: string;
+  };
+
   type UpdateMenuReply = {};
 
   type UpdateMenuRequest = {
-    id?: string;
+    uid?: string;
     pid?: string;
     permission_id?: string;
     name?: string;
@@ -358,7 +430,7 @@ declare namespace API {
   type UpdatePermissionReply = {};
 
   type UpdatePermissionRequest = {
-    id?: string;
+    uid?: string;
     name?: string;
     alias?: string;
     describe?: string;
@@ -377,7 +449,7 @@ declare namespace API {
   type UpdateRoleReply = {};
 
   type UpdateRoleRequest = {
-    id?: string;
+    uid?: string;
     name?: string;
     describe?: string;
     status?: number;
@@ -394,8 +466,9 @@ declare namespace API {
   type UpdateUserReply = {};
 
   type UpdateUserRequest = {
-    id?: string;
+    uid?: string;
     email?: string;
+    username?: string;
     nickname?: string;
     password?: string;
     re_password?: string;
@@ -404,19 +477,19 @@ declare namespace API {
   };
 
   type UserBindRoleParams = {
-    id: string;
+    uid: string;
   };
 
   type UserDeleteUserParams = {
-    id: string;
+    uid: string;
   };
 
   type UserGetUserParams = {
-    id: string;
+    uid: string;
   };
 
   type UserInfo = {
-    id?: string;
+    uid?: string;
     username?: string;
     email?: string;
     nickname?: string;
@@ -424,21 +497,25 @@ declare namespace API {
     status?: number;
     created_at?: string;
     updated_at?: string;
-    role_ids?: number[];
+    last_login?: string;
+    role_ids?: string[];
   };
 
   type UserListUserParams = {
     'pagination.page'?: number;
     'pagination.page_size'?: number;
     'pagination.total'?: number;
+    status?: number;
+    username?: string;
+    email?: string;
   };
 
   type UserUnbindRoleParams = {
-    id: string;
+    uid: string;
     role_id: string;
   };
 
   type UserUpdateUserParams = {
-    id: string;
+    uid: string;
   };
 }

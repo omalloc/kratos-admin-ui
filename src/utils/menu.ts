@@ -17,7 +17,7 @@ export const listToTree = (menuData: API.MenuInfo[] = []): MenuDataItem[] => {
       name: node.name,
       icon: node.icon || 'icon-menu',
       sort_by: node.sort_by,
-      children: collectorsTree(node.id!),
+      children: collectorsTree(node.uid!),
     }));
   };
 

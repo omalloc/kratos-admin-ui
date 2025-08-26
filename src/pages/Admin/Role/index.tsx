@@ -1,4 +1,3 @@
-import * as permissionService from '@/services/console/permission';
 import * as roleService from '@/services/console/role';
 import { mergeData } from '@/utils/pagination';
 import {
@@ -12,7 +11,7 @@ import {
   type ActionType,
   type ProColumns,
 } from '@ant-design/pro-components';
-import { useRequest } from '@umijs/max';
+import { useModel } from '@umijs/max';
 import { App, Button, Col, Descriptions, Empty, Row, Tag, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 
@@ -75,9 +74,9 @@ const PermissionSelectList: React.FC<PermissionSelectListProps> = (props) => {
   };
 
   return (
-    <Row id={id} gutter={24}>
+    <Row key={id} gutter={24}>
       {Object.values(dataSource).map((item) => {
-        const perm = permissionMap[item.id || '0'];
+        const perm = permissionMap[item.uid || '0'];
         const checkedAll = perm?.actions?.length === item.actions?.length;
         const curActions = (perm?.actions || []).reduce<Record<string, API.Action>>((kv, item) => {
           if (item.key) {
@@ -87,7 +86,7 @@ const PermissionSelectList: React.FC<PermissionSelectListProps> = (props) => {
         }, {});
 
         return (
-          <Col key={item.id} span={24} style={{ marginBottom: 12 }}>
+          <Col key={item.uid} span={24} style={{ marginBottom: 12 }}>
             <Row gutter={16}>
               <Col span={4} style={{ textAlign: 'right' }}>
                 {item.name}:
@@ -98,19 +97,19 @@ const PermissionSelectList: React.FC<PermissionSelectListProps> = (props) => {
                   style={{ userSelect: 'none' }}
                   checked={checkedAll}
                   onChange={(checked) => {
-                    onCheckedAllChange(item.id, item, checked);
+                    onCheckedAllChange(item.uid, item, checked);
                   }}
                 >
                   全选
                 </Tag.CheckableTag>
-                {item.actions!.map((action) => {
+                {item.actions?.map((action) => {
                   return (
                     <Tag.CheckableTag
                       key={action.key}
                       style={{ userSelect: 'none' }}
                       checked={curActions[action.key || ''] !== undefined}
                       onChange={(checked) => {
-                        onCheckboxChange(item.id, action, checked);
+                        onCheckboxChange(item.uid, action, checked);
                       }}
                     >
                       {action.describe}
@@ -134,13 +133,13 @@ const ProPermissionSelectList: React.FC<any> = ({ fieldProps, dataSource, ...res
   );
 };
 
-const expandedRowRender = (record: API.RoleInfo, permissionMap: Record<string, Required<API.PermissionInfo>>) => {
+const expandedRowRender = (record: API.RoleInfo, permissionMap: Record<string, API.PermissionInfo>) => {
   if (!record.permissions || record.permissions.length <= 0) {
     return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="无任何授权 " />;
   }
 
   return (
-    <Descriptions key={record.id} style={{ marginLeft: '48px' }} column={2} title="已授权的模块权限">
+    <Descriptions key={record.uid} style={{ marginLeft: '48px' }} column={2} title="已授权的模块权限">
       {record.permissions.map((item: API.RolePermission) => {
         if (!item.perm_id) {
           return null;
@@ -159,21 +158,12 @@ const expandedRowRender = (record: API.RoleInfo, permissionMap: Record<string, R
 };
 
 const RolePage: React.FC = () => {
+  const actionRef = useRef<ActionType>();
   const { message } = App.useApp();
-
+  const { permissionMap, loading } = useModel('permission');
   const [currentId, setCurrentId] = useState<string>();
   const [editVisible, setEditVisible] = useState(false);
   const [authorizeVisible, setAuthorizeVisible] = useState(false);
-  const actionRef = useRef<ActionType>();
-
-  const { data: permissionMap = {} } = useRequest(() => permissionService.permissionListAllPermission(), {
-    formatResult: (res) => {
-      return res.data?.reduce<Record<string, Required<API.PermissionInfo>>>((kv, item) => {
-        kv[item.id || ''] = item as Required<API.PermissionInfo>;
-        return kv;
-      }, {});
-    },
-  });
 
   const handleAdd = () => {
     setEditVisible(true);
@@ -181,11 +171,11 @@ const RolePage: React.FC = () => {
   };
   const handleEdit = (record: API.RoleInfo) => {
     setEditVisible(true);
-    setCurrentId(record.id);
+    setCurrentId(record.uid);
   };
   const handleAuthorize = (record: API.RoleInfo) => {
     setAuthorizeVisible(true);
-    setCurrentId(record.id);
+    setCurrentId(record.uid);
   };
   const handleCancel = () => {
     setCurrentId(undefined);
@@ -206,20 +196,34 @@ const RolePage: React.FC = () => {
       title: '操作',
       width: 150,
       render: (_, record) => [
-        <a key="authorize" onClick={() => handleAuthorize(record)}>
+        <Button
+          size="small"
+          color="default"
+          variant="link"
+          key="authorize"
+          disabled={record.name === 'root'}
+          onClick={() => handleAuthorize(record)}
+        >
           授权
-        </a>,
-        <a key="edit" onClick={() => handleEdit(record)}>
+        </Button>,
+        <Button
+          size="small"
+          color="default"
+          variant="link"
+          key="edit"
+          disabled={record.name === 'root'}
+          onClick={() => handleEdit(record)}
+        >
           编辑
-        </a>,
+        </Button>,
       ],
     },
   ];
 
   return (
-    <PageContainer>
+    <PageContainer loading={loading}>
       <ProTable<API.RoleInfo>
-        rowKey="id"
+        rowKey="uid"
         actionRef={actionRef}
         columns={columns}
         request={async (params) => {
@@ -236,7 +240,10 @@ const RolePage: React.FC = () => {
           }
           return 'a-table-row-striped-odd';
         }}
-        expandable={{ expandRowByClick: true, expandedRowRender: (record) => expandedRowRender(record, permissionMap) }}
+        expandable={{
+          expandRowByClick: false,
+          expandedRowRender: (record) => expandedRowRender(record, permissionMap),
+        }}
         toolBarRender={() => {
           return [
             <Button key="add" type="primary" onClick={handleAdd}>
@@ -253,12 +260,10 @@ const RolePage: React.FC = () => {
         }}
         request={async (params) => {
           if (!params.currentId) {
-            return {
-              id: undefined,
-            };
+            return {};
           }
 
-          const data = await roleService.roleGetRole({ id: params.currentId });
+          const data = await roleService.roleGetRole({ uid: params.currentId });
           return {
             ...data,
           };
@@ -266,8 +271,8 @@ const RolePage: React.FC = () => {
         onFinish={async (payload) => {
           console.log('values', payload);
           try {
-            if (payload.id) {
-              await roleService.roleUpdateRole({ id: payload.id || '' }, payload);
+            if (payload.uid) {
+              await roleService.roleUpdateRole({ uid: payload.uid || '' }, payload);
               message.success('编辑成功');
             } else {
               await roleService.roleCreateRole(payload);
@@ -286,7 +291,7 @@ const RolePage: React.FC = () => {
           onCancel: handleCancel,
         }}
       >
-        <ProFormText name="id" hidden />
+        <ProFormText name="uid" hidden />
         <ProFormGroup>
           <ProFormText
             name="name"
@@ -309,14 +314,14 @@ const RolePage: React.FC = () => {
           if (!params.currentId) {
             message.error('授权目标不存在');
             return {
-              id: undefined,
+              uid: undefined,
               permissions: [],
             };
           }
 
-          const data = await roleService.roleGetRole({ id: params.currentId });
+          const data = await roleService.roleGetRole({ uid: params.currentId });
           return {
-            id: data.id,
+            uid: data.uid,
             permissions: data.permissions || [],
           };
         }}
@@ -329,7 +334,7 @@ const RolePage: React.FC = () => {
         onFinish={async (values) => {
           try {
             await roleService.roleBindPermission(
-              { id: values.id || '' },
+              { uid: values.uid || '' },
               {
                 data: values.permissions?.map((value) => {
                   return {
@@ -349,7 +354,7 @@ const RolePage: React.FC = () => {
           }
         }}
       >
-        <ProFormText name="id" hidden />
+        <ProFormText name="uid" hidden />
         <ProPermissionSelectList name="permissions" dataSource={permissionMap} label="授权模块" />
       </ModalForm>
     </PageContainer>

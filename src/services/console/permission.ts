@@ -43,7 +43,7 @@ export async function permissionGetPermission(
   params: API.PermissionGetPermissionParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.GetPermissionReply>(`/api/console/permission/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
@@ -58,7 +58,7 @@ export async function permissionUpdatePermission(
   body: API.UpdatePermissionRequest,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.UpdatePermissionReply>(`/api/console/permission/${param0}`, {
     method: 'PUT',
     headers: {
@@ -76,7 +76,7 @@ export async function permissionDeletePermission(
   params: API.PermissionDeletePermissionParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.DeletePermissionReply>(`/api/console/permission/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },

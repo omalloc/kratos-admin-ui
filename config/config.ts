@@ -46,11 +46,13 @@ export default defineConfig({
    * @doc https://umijs.org/docs/max/antd#antd
    */
   antd: {
-    // theme: {
-    //   token: {
-    //     borderRadius: '2px',
-    //   },
-    // },
+    theme: {
+      token: {
+        // borderRadius: '2px',
+        colorPrimary: '#8bbb11',
+        colorLink: '#8bbb11',
+      },
+    },
     configProvider: {},
     appConfig: {},
   },

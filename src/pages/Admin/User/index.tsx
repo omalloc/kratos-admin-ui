@@ -1,6 +1,6 @@
-import * as roleService from '@/services/console/role';
 import * as userService from '@/services/console/user';
 import { mergeData } from '@/utils/pagination';
+import { DeleteOutlined, DisconnectOutlined, EditOutlined, LinkOutlined } from '@ant-design/icons';
 import {
   ActionType,
   ModalForm,
@@ -10,14 +10,16 @@ import {
   ProFormSelect,
   ProFormText,
   ProTable,
+  TableDropdown,
   type ProColumns,
 } from '@ant-design/pro-components';
-import { useRequest } from '@umijs/max';
-import { App, Badge, Button, Divider, Space, Tooltip, Typography } from 'antd';
+import { useModel } from '@umijs/max';
+import { App, Avatar, Badge, Button, Divider, Space, Tooltip, Typography } from 'antd';
+import dayjs from 'dayjs';
 import { useRef, useState } from 'react';
 
 type User = {
-  id: string;
+  uid: string;
   username: string;
   password?: string;
   nickname: string;
@@ -29,14 +31,16 @@ type User = {
   updated_at: string;
 };
 
-const UserModal: React.FC<{
+type UserModalProps = {
   open: boolean;
   onCancel?: () => void;
   onOk?: () => void;
   editing?: boolean;
   initialValues?: Partial<User>;
-}> = ({ open, onCancel, onOk, editing = false, initialValues }) => {
-  const { data: roleList = [] } = useRequest(() => roleService.roleGetAll());
+};
+
+const UserModal: React.FC<UserModalProps> = ({ open, onCancel, onOk, editing = false, initialValues }) => {
+  const { roleMap } = useModel('role');
 
   return (
     <ModalForm<User>
@@ -54,8 +58,8 @@ const UserModal: React.FC<{
       initialValues={initialValues}
       onFinish={async (values) => {
         try {
-          if (editing && values.id) {
-            await userService.userUpdateUser({ id: values.id }, values as API.UpdateUserRequest);
+          if (editing && values.uid) {
+            await userService.userUpdateUser({ uid: values.uid }, values as API.UpdateUserRequest);
           } else {
             await userService.userCreateUser(values as API.CreateUserRequest);
           }
@@ -67,7 +71,7 @@ const UserModal: React.FC<{
         }
       }}
     >
-      <ProFormText name="id" hidden />
+      <ProFormText name="uid" hidden />
       <ProFormGroup style={{ marginTop: '24px' }}>
         <ProFormText name="username" label="用户名" colProps={{ md: 12, xl: 12 }} rules={[{ required: true }]} />
         <ProFormText name="nickname" label="昵称" colProps={{ md: 12, xl: 12 }} />
@@ -84,7 +88,7 @@ const UserModal: React.FC<{
         label="状态"
         options={[
           { label: '启用', value: 1 },
-          { label: '禁用', value: 0 },
+          { label: '禁用', value: 2 },
         ]}
       />
       <Divider />
@@ -93,9 +97,9 @@ const UserModal: React.FC<{
           name="role_ids"
           label="角色"
           mode="multiple"
-          options={roleList.map((role) => ({
+          options={Object.values(roleMap).map((role) => ({
             label: role.alias,
-            value: role.id,
+            value: role.uid,
           }))}
         />
       </ProFormGroup>
@@ -104,16 +108,20 @@ const UserModal: React.FC<{
 };
 
 const UserPage: React.FC = () => {
+  const actionRef = useRef<ActionType>();
+
   const { message } = App.useApp();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [currentUser, setCurrentUser] = useState<Partial<User>>();
-  const actionRef = useRef<ActionType>();
-  const { data: roleList = [] } = useRequest(() => roleService.roleGetAll());
+  const { lastRole, roleMap } = useModel('role');
 
   const handleAdd = () => {
     setEditing(false);
-    setCurrentUser(undefined);
+    setCurrentUser({
+      status: 1,
+      role_ids: (lastRole?.uid && [lastRole?.uid]) || [],
+    });
     setOpen(true);
   };
 
@@ -123,9 +131,9 @@ const UserPage: React.FC = () => {
     setOpen(true);
   };
 
-  const handleUpdateStatus = async (id: string, status: number) => {
+  const handleUpdateStatus = async (uid: string, status: number) => {
     try {
-      await userService.userUpdateUser({ id }, {
+      await userService.userUpdateUser({ uid }, {
         status,
       } as API.UpdateUserRequest);
       message.success('状态更新成功');
@@ -135,9 +143,9 @@ const UserPage: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (uid: string) => {
     try {
-      await userService.userDeleteUser({ id });
+      await userService.userDeleteUser({ uid });
       message.success('删除成功');
       actionRef.current?.reload();
     } catch (error) {
@@ -147,9 +155,10 @@ const UserPage: React.FC = () => {
 
   const columns: ProColumns<User>[] = [
     {
-      dataIndex: 'id',
-      title: 'ID',
-      width: 90,
+      dataIndex: 'avatar_id',
+      title: '#',
+      width: 80,
+      render: (_, record) => <Avatar size={32}>{record.username.charAt(0).toUpperCase()}</Avatar>,
       hideInSearch: true,
     },
     {
@@ -172,7 +181,7 @@ const UserPage: React.FC = () => {
       render: (_, record) => {
         const roles = record.role_ids
           .map((roleId) => {
-            const role = roleList.find((r) => String(r.id) === String(roleId));
+            const role = roleMap[roleId] || {};
             return role?.alias || '';
           })
           .filter(Boolean);
@@ -183,27 +192,77 @@ const UserPage: React.FC = () => {
       key: 'status',
       title: '状态',
       width: 120,
+      valueEnum: {
+        1: { text: '正常', status: 'Processing' },
+        2: { text: '禁止登录', status: 'Error' },
+      },
       render: (_, { status = 0 }) => (
         <Badge status={status === 1 ? 'processing' : 'error'} text={status === 1 ? '正常' : '禁止登录'} />
       ),
     },
     {
+      key: 'last_login',
+      dataIndex: 'last_login',
+      title: '最后登录时间',
+      hideInSearch: true,
+      renderText: (value) => (value ? dayjs(value).fromNow() : '-'),
+    },
+    {
       key: 'option',
       title: '操作',
       valueType: 'option',
-      width: 180,
-      render: (_, record) => [
-        <a key="edit" onClick={() => handleEdit(record)}>
+      width: 140,
+      render: (text, record, _, action) => [
+        <Button
+          key="edit"
+          size="small"
+          color="primary"
+          variant="link"
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record)}
+        >
           编辑
-        </a>,
-        <Divider key="split_1" type="vertical" />,
-        <a key="disabled" onClick={() => handleUpdateStatus(record.id, record.status === 0 ? 1 : 0)}>
-          {record.status === 0 ? '禁用' : '启用'}
-        </a>,
-        <Divider key="split_2" type="vertical" />,
-        <a key="delete" onClick={() => handleDelete(record.id)}>
-          删除
-        </a>,
+        </Button>,
+        <Divider key="divider" type="vertical" />,
+        <TableDropdown
+          key="actionGroup"
+          onSelect={(key: string) => {
+            if (key === 'delete') {
+              handleDelete(record.uid);
+              return;
+            }
+            if (key === 'disabled') {
+              handleUpdateStatus(record.uid, record.status === 1 ? 2 : 1);
+              return;
+            }
+          }}
+          menus={[
+            {
+              key: 'disabled',
+              name:
+                record.status === 1 ? (
+                  <span style={{ color: 'red' }}>
+                    <DisconnectOutlined style={{ marginRight: '4px' }} />
+                    禁止登录
+                  </span>
+                ) : (
+                  <span>
+                    <LinkOutlined style={{ marginRight: '4px' }} />
+                    启用
+                  </span>
+                ),
+            },
+            {
+              key: 'delete',
+              name: (
+                <span style={{ color: 'red' }}>
+                  <DeleteOutlined style={{ marginRight: '4px' }} />
+                  删除
+                </span>
+              ),
+            },
+          ]}
+        />,
       ],
     },
   ];
@@ -212,7 +271,7 @@ const UserPage: React.FC = () => {
     <PageContainer>
       <ProTable<User>
         actionRef={actionRef}
-        rowKey="id"
+        rowKey="uid"
         search={{
           labelWidth: 120,
         }}

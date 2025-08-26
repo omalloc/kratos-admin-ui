@@ -12,7 +12,7 @@ import {
   ProTable,
   type ProColumns,
 } from '@ant-design/pro-components';
-import { App, Button, Collapse, Divider, Tag, type FormInstance } from 'antd';
+import { App, Button, Collapse, Divider, Popconfirm, Tag, type FormInstance } from 'antd';
 import { useRef, useState } from 'react';
 
 const defActions: API.Action[] = [
@@ -65,7 +65,7 @@ const PermissionPage: React.FC = () => {
   };
 
   const handleEdit = (record: API.PermissionInfo) => {
-    setEditingId(record.id);
+    setEditingId(record.uid);
     setVisible(true);
   };
 
@@ -112,11 +112,27 @@ const PermissionPage: React.FC = () => {
     {
       key: 'option',
       title: '操作',
+      width: 150,
       valueType: 'option',
       render: (_, record) => [
-        <a key="edit" onClick={() => handleEdit(record)}>
+        <Button key="edit" size="small" color="primary" variant="link" onClick={() => handleEdit(record)}>
           编辑
-        </a>,
+        </Button>,
+        <Divider key="divider" type="vertical" />,
+        <Popconfirm
+          key="del"
+          title="确定删除该权限吗？"
+          okText="确认"
+          cancelText="取消"
+          placement="topRight"
+          onConfirm={() => {
+            permissionService.permissionDeletePermission({ uid: record.uid || '' });
+          }}
+        >
+          <Button size="small" color="danger" variant="link" disabled={!record.allow_delete}>
+            删除
+          </Button>
+        </Popconfirm>,
       ],
     },
   ];
@@ -124,7 +140,7 @@ const PermissionPage: React.FC = () => {
   return (
     <PageContainer>
       <ProTable<API.PermissionInfo>
-        rowKey="id"
+        rowKey="uid"
         actionRef={ref}
         columns={columns}
         request={async (params) => {
@@ -152,14 +168,14 @@ const PermissionPage: React.FC = () => {
         title={editingId ? `编辑权限` : '新增权限'}
         open={visible}
         formRef={formRef}
-        params={{ id: editingId }}
-        request={async (params: { id: string | undefined }) => {
-          if (params.id === undefined) {
+        params={{ uid: editingId }}
+        request={async (params: { uid: string | undefined }) => {
+          if (params.uid === undefined) {
             return {};
           }
 
           const data = await permissionService.permissionGetPermission({
-            id: params.id,
+            uid: params.uid,
           });
 
           console.log('ModalForm', data);
@@ -175,9 +191,10 @@ const PermissionPage: React.FC = () => {
           console.log('form payload', payload);
           try {
             if (editingId) {
-              await permissionService.permissionUpdatePermission({ id: payload.id || '' }, payload);
+              await permissionService.permissionUpdatePermission({ uid: payload.uid || '' }, payload);
               message.success('编辑成功');
             } else {
+              payload.status = 1;
               await permissionService.permissionCreatePermission(payload);
               message.success('新增成功');
             }
@@ -190,7 +207,7 @@ const PermissionPage: React.FC = () => {
           }
         }}
       >
-        <ProFormText name="id" hidden />
+        <ProFormText name="uid" hidden />
         <ProFormGroup>
           <ProFormText
             name="name"

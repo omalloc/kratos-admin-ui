@@ -1,10 +1,16 @@
-import { passportAuthorizeMenu, passportCurrentUser } from '@/services/console/passport';
+import { passportCurrentUser } from '@/services/console/passport';
 import { history, RunTimeLayoutConfig, type RequestConfig } from '@umijs/max';
 import { App } from 'antd';
+import dayjs from 'dayjs';
+import zhCN from 'dayjs/locale/zh-cn';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import RightContent from './components/RightContent';
 import { APP_TOKEN_KEY } from './constants';
 import { CurrentUser, InitialState } from './typing';
 import { listToTree } from './utils/menu';
+
+dayjs.locale(zhCN);
+dayjs.extend(relativeTime);
 
 // 运行时配置
 export const request: RequestConfig = {
@@ -54,6 +60,11 @@ export const request: RequestConfig = {
         } else {
           console.error('响应错误:', error.response.status, error.response.data);
         }
+        if (error.response.status === 401) {
+          // 401 需要登录
+          localStorage.removeItem(APP_TOKEN_KEY);
+          history.push('/passport/login');
+        }
       } else if (error.request) {
         // 请求已经成功发起，但没有收到响应
         console.error('请求错误:', error.request);
@@ -76,6 +87,7 @@ export async function getInitialState(): Promise<InitialState> {
       const currentUser = {
         user: user.user,
         roles: user.roles,
+        allow_menus: user.allow_menus,
       } as CurrentUser;
 
       const logout = async () => {
@@ -87,7 +99,7 @@ export async function getInitialState(): Promise<InitialState> {
         collapsed: false,
         currentUser,
         token,
-        settings: { theme: 'light' },
+        settings: { theme: 'light', colorPrimary: '#8bbb11' },
         logout,
       };
     }
@@ -101,7 +113,7 @@ export async function getInitialState(): Promise<InitialState> {
       currentUser: undefined,
       collapsed: false,
       token: '',
-      settings: { theme: 'light' },
+      settings: { theme: 'light', colorPrimary: '#8bbb11' },
       logout: async () => {},
     };
   }
@@ -113,7 +125,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     title: '',
     layout: 'mix',
     navTheme: initialState?.settings.theme,
-    // colorPrimary: '#2F54EB',
+    colorPrimary: initialState?.settings.colorPrimary,
     splitMenus: true,
     fixedHeader: true,
     fixSiderbar: true,
@@ -128,13 +140,12 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     menu: {
       locale: false,
       params: {
-        userId: initialState?.currentUser?.user.id,
+        userId: initialState?.currentUser?.user.uid,
       },
       request: async (params, defaultMenuData) => {
-        console.log('menu.params', params);
         // initialState.currentUser 中包含了所有用户信息
-        const { data = [] } = await passportAuthorizeMenu({});
-        return listToTree(data);
+        // const { allow_menus } = await passportCurrentUser({});
+        return listToTree(initialState?.currentUser?.allow_menus || []);
       },
     },
     token: {},
@@ -145,3 +156,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
   };
 };
+
+export function rootContainer(container: React.ReactNode) {
+  return <App>{container}</App>;
+}

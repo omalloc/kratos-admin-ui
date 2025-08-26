@@ -2,13 +2,13 @@
 /* eslint-disable */
 import { request } from '@umijs/max';
 
-/** 此处后端没有提供注释 GET /api/console/menu */
-export async function menuListMenu(
+/** 此处后端没有提供注释 GET /api/console/crontab */
+export async function crontabListCrontab(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.MenuListMenuParams,
+  params: API.CrontabListCrontabParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.ListMenuReply>('/api/console/menu', {
+  return request<API.ListCrontabReply>('/api/console/crontab', {
     method: 'GET',
     params: {
       ...params,
@@ -17,9 +17,9 @@ export async function menuListMenu(
   });
 }
 
-/** 此处后端没有提供注释 POST /api/console/menu */
-export async function menuCreateMenu(body: API.CreateMenuRequest, options?: { [key: string]: any }) {
-  return request<API.CreateMenuReply>('/api/console/menu', {
+/** 此处后端没有提供注释 POST /api/console/crontab */
+export async function crontabCreateCrontab(body: API.CreateCrontabRequest, options?: { [key: string]: any }) {
+  return request<API.CreateCrontabReply>('/api/console/crontab', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -29,29 +29,29 @@ export async function menuCreateMenu(body: API.CreateMenuRequest, options?: { [k
   });
 }
 
-/** 此处后端没有提供注释 GET /api/console/menu/${param0} */
-export async function menuGetMenu(
+/** 此处后端没有提供注释 GET /api/console/crontab/${param0} */
+export async function crontabGetCrontab(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.MenuGetMenuParams,
+  params: API.CrontabGetCrontabParams,
   options?: { [key: string]: any },
 ) {
   const { uid: param0, ...queryParams } = params;
-  return request<API.GetMenuReply>(`/api/console/menu/${param0}`, {
+  return request<API.GetCrontabReply>(`/api/console/crontab/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
   });
 }
 
-/** 此处后端没有提供注释 PUT /api/console/menu/${param0} */
-export async function menuUpdateMenu(
+/** 此处后端没有提供注释 PUT /api/console/crontab/${param0} */
+export async function crontabUpdateCrontab(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.MenuUpdateMenuParams,
-  body: API.UpdateMenuRequest,
+  params: API.CrontabUpdateCrontabParams,
+  body: API.UpdateCrontabRequest,
   options?: { [key: string]: any },
 ) {
   const { uid: param0, ...queryParams } = params;
-  return request<API.UpdateMenuReply>(`/api/console/menu/${param0}`, {
+  return request<API.UpdateCrontabReply>(`/api/console/crontab/${param0}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -62,14 +62,14 @@ export async function menuUpdateMenu(
   });
 }
 
-/** 此处后端没有提供注释 DELETE /api/console/menu/${param0} */
-export async function menuDeleteMenu(
+/** 此处后端没有提供注释 DELETE /api/console/crontab/${param0} */
+export async function crontabDeleteCrontab(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.MenuDeleteMenuParams,
+  params: API.CrontabDeleteCrontabParams,
   options?: { [key: string]: any },
 ) {
   const { uid: param0, ...queryParams } = params;
-  return request<API.DeleteMenuReply>(`/api/console/menu/${param0}`, {
+  return request<API.DeleteCrontabReply>(`/api/console/crontab/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),

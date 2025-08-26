@@ -43,7 +43,7 @@ export async function roleGetRole(
   params: API.RoleGetRoleParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.GetRoleReply>(`/api/console/role/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
@@ -58,7 +58,7 @@ export async function roleUpdateRole(
   body: API.UpdateRoleRequest,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.UpdateRoleReply>(`/api/console/role/${param0}`, {
     method: 'PUT',
     headers: {
@@ -76,7 +76,7 @@ export async function roleDeleteRole(
   params: API.RoleDeleteRoleParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.DeleteRoleReply>(`/api/console/role/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
@@ -91,7 +91,7 @@ export async function roleBindPermission(
   body: API.BindPermissionRequest,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { uid: param0, ...queryParams } = params;
   return request<API.BindPermissionReply>(`/api/console/role/${param0}/permission`, {
     method: 'PUT',
     headers: {
@@ -110,7 +110,7 @@ export async function roleUnbindPermission(
   body: API.UnbindPermissionRequest,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, permission_id: param1, ...queryParams } = params;
+  const { uid: param0, permission_id: param1, ...queryParams } = params;
   return request<API.UnbindPermissionReply>(`/api/console/role/${param0}/permission/${param1}`, {
     method: 'PUT',
     headers: {

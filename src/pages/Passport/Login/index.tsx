@@ -1,5 +1,5 @@
-import * as passportService from '@/services/console/passport';
 import { APP_TOKEN_KEY } from '@/constants';
+import * as passportService from '@/services/console/passport';
 import { LockOutlined, MobileOutlined, UserOutlined, WeiboCircleOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText, setAlpha } from '@ant-design/pro-components';
 import { history, useModel } from '@umijs/max';
@@ -34,7 +34,6 @@ const Login: React.FC = () => {
         </Space>
       }
       onFinish={async (values) => {
-        console.log('提交登录信息', values);
         try {
           const res = await passportService.passportLogin(
             {
@@ -45,7 +44,6 @@ const Login: React.FC = () => {
             {
               responseInterceptors: [
                 (config: any) => {
-                  console.log('响应拦截器', config);
                   const { authorization } = config.headers;
                   if (authorization) {
                     localStorage.setItem(APP_TOKEN_KEY, authorization);
@@ -57,12 +55,11 @@ const Login: React.FC = () => {
             },
           );
 
-          history.push('/admin');
+          history.push('/');
           return true;
         } catch (err: any) {
-          console.log('登录失败', err);
           let errorMessage = '登录失败，请检查用户名和密码';
-          
+
           if (err?.response?.data?.message && err.response.data.message.trim()) {
             errorMessage = err.response.data.message;
           } else if (err?.data?.message && err.data.message.trim()) {
@@ -91,7 +88,7 @@ const Login: React.FC = () => {
                 errorMessage = `请求失败 (${status})`;
             }
           }
-          
+
           message.error(errorMessage, 3);
           return false;
         }
@@ -133,6 +130,10 @@ const Login: React.FC = () => {
             fieldProps={{
               size: 'large',
               prefix: <LockOutlined className={'prefixIcon'} />,
+              popoverProps: {
+                autoAdjustOverflow: true,
+                placement: 'topRight',
+              },
               strengthText: '密码应包含数字、字母和特殊字符，长度至少为8个字符。',
               statusRender: (value) => {
                 const getStatus = () => {

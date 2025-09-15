@@ -6,7 +6,7 @@ import iconJson from './icon.json';
 const IconList = iconJson.glyphs.map((item) => `${iconJson.css_prefix_text}${item.font_class}`);
 
 const FontIcon = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js', // 在 iconfont.cn 上生成
+  scriptUrl: '//at.alicdn.com/t/c/font_4221036_4blevxv17fb.js', // 在 iconfont.cn 上生成
 });
 
 export { FontIcon };

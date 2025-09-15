@@ -3,7 +3,7 @@ export default [
     path: '/',
     name: '仪表盘',
     icon: 'icon-dashboard',
-    component: './Home',
+    component: './Welcome',
   },
 
   // Admin
@@ -61,6 +61,26 @@ export default [
         },
       },
       {
+        path: '/admin/dept',
+        name: '部门',
+        icon: 'cluster',
+        component: './Admin/Department',
+        access: 'routeFilter',
+        meta: {
+          permission: [], //department
+        },
+      },
+      {
+        path: '/admin/tenant',
+        name: '租户',
+        icon: 'apartment',
+        component: './Admin/Tenant',
+        access: 'routeFilter',
+        meta: {
+          permission: ['tenant'],
+        },
+      },
+      {
         path: '/admin/crontab',
         name: '定时任务',
         icon: 'schedule',
@@ -76,16 +96,14 @@ export default [
   {
     path: '/todo',
     name: '待办事项',
-    icon: 'icon-dashboard',
+    icon: 'icon-star',
     component: './Todo',
   },
-
-  // 测试
   {
-    path: '/test',
-    name: '测试',
-    icon: 'icon-dashboard',
-    component: './404',
+    path: '/posts',
+    name: '文章',
+    icon: 'icon-star',
+    component: './Posts',
   },
 
   // Passport

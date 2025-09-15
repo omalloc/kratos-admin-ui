@@ -1,6 +1,6 @@
 import type { MenuDataItem } from '@ant-design/pro-components';
 
-export const listToTree = (menuData: API.MenuInfo[] = []): MenuDataItem[] => {
+export const menuCovert = (menuData: API.MenuInfo[] = []): MenuDataItem[] => {
   // 先构建一个父ID到子节点的映射
   const menuMap = menuData.reduce((acc, node) => {
     const pid = node.pid || '0';

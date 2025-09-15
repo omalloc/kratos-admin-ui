@@ -6,8 +6,8 @@ import zhCN from 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import RightContent from './components/RightContent';
 import { APP_TOKEN_KEY } from './constants';
-import { CurrentUser, InitialState } from './typing';
-import { listToTree } from './utils/menu';
+import type { CurrentUser, InitialState } from './typing';
+import { menuCovert } from './utils/menu';
 
 dayjs.locale(zhCN);
 dayjs.extend(relativeTime);
@@ -84,11 +84,11 @@ export async function getInitialState(): Promise<InitialState> {
   try {
     if (token) {
       const user = await passportCurrentUser({});
-      const currentUser = {
-        user: user.user,
-        roles: user.roles,
-        allow_menus: user.allow_menus,
-      } as CurrentUser;
+      const { configs = {} } = user;
+      const settings = {
+        theme: configs['theme'] || 'light',
+        colorPrimary: configs['colorPrimary'] || '#8bbb11',
+      };
 
       const logout = async () => {
         localStorage.removeItem(APP_TOKEN_KEY);
@@ -97,9 +97,9 @@ export async function getInitialState(): Promise<InitialState> {
 
       return {
         collapsed: false,
-        currentUser,
+        currentUser: user as CurrentUser,
+        settings,
         token,
-        settings: { theme: 'light', colorPrimary: '#8bbb11' },
         logout,
       };
     }
@@ -136,19 +136,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     collapsedButtonRender: false,
     siderWidth: 180, // ignored prop.
     contentWidth: 'Fluid',
-    iconfontUrl: '//at.alicdn.com/t/c/font_4221036_w49cm25y52.js',
+    iconfontUrl: '//at.alicdn.com/t/c/font_4221036_4blevxv17fb.js',
     menu: {
       locale: false,
       params: {
         userId: initialState?.currentUser?.user.uid,
       },
-      request: async (params, defaultMenuData) => {
-        // initialState.currentUser 中包含了所有用户信息
-        // const { allow_menus } = await passportCurrentUser({});
-        return listToTree(initialState?.currentUser?.allow_menus || []);
+      request: async (params, _) => {
+        return menuCovert(initialState?.currentUser?.allow_menus || []);
       },
     },
-    token: {},
     appList: [],
     rightContentRender: () => <RightContent style={{ marginRight: '12px' }} />,
     childrenRender(dom) {

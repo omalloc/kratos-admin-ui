@@ -80,6 +80,18 @@ export async function passportUpdateProfile(body: API.UpdateProfileRequest, opti
   });
 }
 
+/** 刷新 token POST /api/console/passport/refresh-token */
+export async function passportRefreshToken(body: API.RefreshTokenRequest, options?: { [key: string]: any }) {
+  return request<API.RefreshTokenReply>('/api/console/passport/refresh-token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** 注册 POST /api/console/passport/register */
 export async function passportRegister(body: API.RegisterRequest, options?: { [key: string]: any }) {
   return request<API.RegisterReply>('/api/console/passport/register', {

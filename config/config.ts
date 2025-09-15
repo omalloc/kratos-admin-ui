@@ -47,11 +47,7 @@ export default defineConfig({
    */
   antd: {
     theme: {
-      token: {
-        // borderRadius: '2px',
-        colorPrimary: '#8bbb11',
-        colorLink: '#8bbb11',
-      },
+      token: {},
     },
     configProvider: {},
     appConfig: {},

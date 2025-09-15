@@ -16,9 +16,6 @@ const PassportLayout: React.FC = () => {
         <title>{name}</title>
       </Helmet>
       <Row style={{ height: '100%' }}>
-        <Col sm={24} md={10} style={{ paddingTop: '80px' }}>
-          <Outlet />
-        </Col>
         <Col sm={24} md={14}>
           <div
             style={{
@@ -39,6 +36,9 @@ const PassportLayout: React.FC = () => {
               }}
             />
           </div>
+        </Col>
+        <Col sm={24} md={10} style={{ paddingTop: '80px' }}>
+          <Outlet />
         </Col>
       </Row>
     </div>

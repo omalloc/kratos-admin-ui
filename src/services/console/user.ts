@@ -108,3 +108,15 @@ export async function userUnbindRole(
     ...(options || {}),
   });
 }
+
+/** 此处后端没有提供注释 POST /api/console/user/config */
+export async function userSaveConfig(body: API.SaveConfigRequest, options?: { [key: string]: any }) {
+  return request<API.SaveConfigReply>('/api/console/user/config', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}

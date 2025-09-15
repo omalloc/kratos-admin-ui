@@ -1,6 +1,7 @@
 export type CurrentUser = {
   user: Required<API.UserInfo>;
   roles: Required<API.RoleInfo[]>;
+  configs: Record<string, string>;
   allow_menus?: Required<API.MenuInfo[]>;
 };
 

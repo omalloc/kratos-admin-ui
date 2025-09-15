@@ -223,7 +223,6 @@ const UserPage: React.FC = () => {
         >
           编辑
         </Button>,
-        <Divider key="divider" type="vertical" />,
         <TableDropdown
           key="actionGroup"
           onSelect={(key: string) => {
@@ -262,7 +261,11 @@ const UserPage: React.FC = () => {
               ),
             },
           ]}
-        />,
+        >
+          <Button size="small" color="primary" variant="link">
+            更多 <span className="a-icon-down" />
+          </Button>
+        </TableDropdown>,
       ],
     },
   ];

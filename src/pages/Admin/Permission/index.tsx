@@ -12,6 +12,7 @@ import {
   ProTable,
   type ProColumns,
 } from '@ant-design/pro-components';
+import { useModel } from '@umijs/max';
 import { App, Button, Collapse, Divider, Popconfirm, Tag, type FormInstance } from 'antd';
 import { useRef, useState } from 'react';
 
@@ -50,12 +51,12 @@ const statusMapLabels: Record<number, string> = {
 };
 
 const PermissionPage: React.FC = () => {
-  const [editingId, setEditingId] = useState<string>();
-  const [visible, setVisible] = useState<boolean>(false);
   const formRef = useRef<FormInstance<API.PermissionInfo>>();
   const ref = useRef<ActionType>();
-
+  const [editingId, setEditingId] = useState<string>();
+  const [visible, setVisible] = useState<boolean>(false);
   const { message } = App.useApp();
+  const { refresh } = useModel('permission');
 
   const handleAdd = () => {
     setEditingId(undefined);
@@ -200,6 +201,8 @@ const PermissionPage: React.FC = () => {
             }
 
             ref.current?.reload();
+            refresh();
+
             handleCancel();
           } catch (error) {
             console.error(error);

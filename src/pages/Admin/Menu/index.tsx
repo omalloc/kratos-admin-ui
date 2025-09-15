@@ -163,7 +163,7 @@ const MenuPage: React.FC = () => {
   const { permissionMap } = useModel('permission');
 
   // 组装菜单列表和树
-  const { data: menuList } = useRequest<{ data: API.MenuInfo[] }>(async () => {
+  const { data: menuList, refresh } = useRequest<{ data: API.MenuInfo[] }>(async () => {
     const { data = [] } = await menuListMenu({
       'pagination.page': 1,
       'pagination.page_size': 1000, // 获取所有菜单
@@ -295,6 +295,7 @@ const MenuPage: React.FC = () => {
         search={false}
         size="small"
         pagination={false}
+        options={{ reload: false }}
         request={async (params) => {
           return {
             data: menuList,
@@ -349,9 +350,7 @@ const MenuPage: React.FC = () => {
             // 关闭模态框
             setVisible(false);
             // 重新获取菜单列表
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
+            refresh();
             return true;
           } catch (error) {
             console.error(error);
@@ -423,7 +422,7 @@ const MenuPage: React.FC = () => {
                     label="可用状态"
                     valueEnum={{ 1: '启用', 2: '禁用' }}
                     convertValue={(value) => (value ? '1' : '2')}
-                    transform={(value) => (value === 1 ? true : false)}
+                    transform={(value) => (value === 1 ? 0 : 1)}
                     colProps={{ span: 6 }}
                   />
                 </ProFormGroup>

@@ -1,3 +1,4 @@
+import { userSaveConfig } from '@/services/console/user';
 import { MoonOutlined, QuestionCircleOutlined, SunOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import { createStyles } from 'antd-style';
@@ -50,15 +51,25 @@ const GlobalHeaderRight: React.FC<{ style?: CSSProperties }> = (props) => {
       </span>
       <span
         className={styles.action}
-        onClick={() =>
+        onClick={() => {
+          const theme = initialState?.settings?.theme === 'light' ? 'realDark' : 'light';
           setInitialState((state: any) => ({
             ...state,
             settings: {
               ...state?.settings,
-              theme: initialState?.settings?.theme === 'light' ? 'realDark' : 'light',
+              theme: theme,
             },
-          }))
-        }
+          }));
+
+          userSaveConfig({
+            key: 'theme',
+            value: theme,
+          })
+            .then(() => {})
+            .catch((e) => {
+              console.error('save theme config failed', e);
+            });
+        }}
       >
         {initialState?.settings?.theme === 'light' ? <MoonOutlined /> : <SunOutlined />}
       </span>
@@ -75,6 +86,14 @@ const GlobalHeaderRight: React.FC<{ style?: CSSProperties }> = (props) => {
                 colorPrimary: event.key,
               },
             }));
+
+            userSaveConfig({ key: 'colorPrimary', value: event.key })
+              .then(() => {
+                console.log('save colorPrimary config success');
+              })
+              .catch((e) => {
+                console.error('save colorPrimary config failed', e);
+              });
           },
           items: [
             {

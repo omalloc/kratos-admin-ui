@@ -29,6 +29,12 @@ declare namespace API {
     role_id?: string;
   };
 
+  type BindTenantReply = {};
+
+  type BindTenantRequest = {
+    uid?: string;
+  };
+
   type CreateCrontabReply = {};
 
   type CreateCrontabRequest = {
@@ -40,6 +46,18 @@ declare namespace API {
     action?: string;
     /** 任务描述 */
     describe?: string;
+  };
+
+  type CreateDepartmentReply = {};
+
+  type CreateDepartmentRequest = {
+    pid?: string;
+    owner_id?: string;
+    name?: string;
+    code?: string;
+    describe?: string;
+    level?: number;
+    status?: number;
   };
 
   type CreateMenuReply = {
@@ -67,6 +85,18 @@ declare namespace API {
     status?: number;
   };
 
+  type CreatePostReply = {
+    post_id?: string;
+  };
+
+  type CreatePostRequest = {
+    title?: string;
+    body?: string;
+    tags?: string[];
+    type?: number;
+    status?: number;
+  };
+
   type CreateRoleReply = {};
 
   type CreateRoleRequest = {
@@ -74,6 +104,14 @@ declare namespace API {
     describe?: string;
     status?: number;
     alias?: string;
+  };
+
+  type CreateTenantReply = {};
+
+  type CreateTenantRequest = {
+    name?: string;
+    alias?: string;
+    describe?: string;
   };
 
   type CreateUserReply = {
@@ -126,19 +164,59 @@ declare namespace API {
 
   type CurrentUserReply = {
     user?: UserInfo;
+    configs?: Record<string, any>;
     roles?: RoleInfo[];
     allow_menus?: MenuInfo[];
   };
 
   type DeleteCrontabReply = {};
 
+  type DeleteDepartmentReply = {};
+
   type DeleteMenuReply = {};
 
   type DeletePermissionReply = {};
 
+  type DeletePostReply = {};
+
   type DeleteRoleReply = {};
 
+  type DeleteTenantReply = {};
+
   type DeleteUserReply = {};
+
+  type DepartmentDeleteDepartmentParams = {
+    uid: string;
+  };
+
+  type DepartmentGetDepartmentParams = {
+    uid: string;
+  };
+
+  type DepartmentInfo = {
+    uid?: string;
+    pid?: string;
+    owner_id?: string;
+    name?: string;
+    code?: string;
+    describe?: string;
+    level?: number;
+    status?: number;
+    created_at?: string;
+    updated_at?: string;
+  };
+
+  type DepartmentListDepartmentParams = {
+    'pagination.page'?: number;
+    'pagination.page_size'?: number;
+    'pagination.total'?: number;
+    status?: number;
+    name?: string;
+  };
+
+  type DepartmentUpdateDepartmentParams = {
+    uid: string;
+  };
 
   type GetAllReply = {
     data?: RoleInfo[];
@@ -146,6 +224,10 @@ declare namespace API {
 
   type GetCrontabReply = {
     data?: CrontabInfo;
+  };
+
+  type GetDepartmentReply = {
+    data?: DepartmentInfo;
   };
 
   type GetMenuReply = {
@@ -161,6 +243,10 @@ declare namespace API {
     status?: number;
   };
 
+  type GetPostReply = {
+    data?: PostInfo;
+  };
+
   type GetRoleReply = {
     uid?: string;
     name?: string;
@@ -172,9 +258,17 @@ declare namespace API {
     data_access?: Action[];
   };
 
+  type GetTenantReply = {
+    data?: TenantInfo;
+  };
+
   type GetUserReply = {
     user?: UserInfo;
     roles?: RoleInfo[];
+  };
+
+  type ListAllDepartmentReply = {
+    data?: DepartmentInfo[];
   };
 
   type ListAllPermissionReply = {
@@ -184,6 +278,11 @@ declare namespace API {
   type ListCrontabReply = {
     pagination?: Pagination;
     data?: CrontabInfo[];
+  };
+
+  type ListDepartmentReply = {
+    pagination?: Pagination;
+    data?: DepartmentInfo[];
   };
 
   type ListMenuReply = {
@@ -196,9 +295,19 @@ declare namespace API {
     pagination?: Pagination;
   };
 
+  type ListPostReply = {
+    pagination?: Pagination;
+    data?: PostInfo[];
+  };
+
   type ListRoleReply = {
     pagination?: Pagination;
     data?: RoleInfo[];
+  };
+
+  type ListTenantReply = {
+    pagination?: Pagination;
+    data?: TenantInfo[];
   };
 
   type ListUserReply = {
@@ -300,6 +409,44 @@ declare namespace API {
     uid: string;
   };
 
+  type PostDeletePostParams = {
+    post_id: string;
+  };
+
+  type PostGetPostParams = {
+    post_id: string;
+  };
+
+  type PostInfo = {
+    id?: string;
+    post_id?: string;
+    title?: string;
+    body?: string;
+    tags?: string[];
+    type?: number;
+    status?: number;
+    created_by?: string;
+    updated_by?: string[];
+    created_at?: string;
+    updated_at?: string;
+  };
+
+  type PostListPostParams = {
+    'pagination.page'?: number;
+    'pagination.page_size'?: number;
+    'pagination.total'?: number;
+    status?: number;
+    title?: string;
+  };
+
+  type PostUpdatePostParams = {
+    post_id: string;
+  };
+
+  type RefreshTokenReply = {};
+
+  type RefreshTokenRequest = {};
+
   type RegisterReply = {};
 
   type RegisterRequest = {
@@ -377,6 +524,13 @@ declare namespace API {
     uid: string;
   };
 
+  type SaveConfigReply = {};
+
+  type SaveConfigRequest = {
+    key?: string;
+    value?: string;
+  };
+
   type SendCaptchaReply = {};
 
   type SendCaptchaRequest = {
@@ -390,6 +544,44 @@ declare namespace API {
     email?: string;
   };
 
+  type TenantBindTenantParams = {
+    uid: string;
+  };
+
+  type TenantDeleteTenantParams = {
+    uid: string;
+  };
+
+  type TenantGetTenantParams = {
+    uid: string;
+  };
+
+  type TenantInfo = {
+    id?: string;
+    uid?: string;
+    name?: string;
+    alias?: string;
+    describe?: string;
+    created_at?: string;
+    updated_at?: string;
+    allow_deleted?: boolean;
+  };
+
+  type TenantListTenantParams = {
+    'pagination.page'?: number;
+    'pagination.page_size'?: number;
+    'pagination.total'?: number;
+    name?: string;
+  };
+
+  type TenantUnbindTenantParams = {
+    uid: string;
+  };
+
+  type TenantUpdateTenantParams = {
+    uid: string;
+  };
+
   type UnbindPermissionReply = {};
 
   type UnbindPermissionRequest = {
@@ -398,6 +590,12 @@ declare namespace API {
   };
 
   type UnbindRoleReply = {};
+
+  type UnbindTenantReply = {};
+
+  type UnbindTenantRequest = {
+    uid?: string;
+  };
 
   type UpdateCrontabReply = {};
 
@@ -411,6 +609,19 @@ declare namespace API {
     action?: string;
     /** 任务描述 */
     describe?: string;
+  };
+
+  type UpdateDepartmentReply = {};
+
+  type UpdateDepartmentRequest = {
+    uid?: string;
+    pid?: string;
+    owner_id?: string;
+    name?: string;
+    code?: string;
+    describe?: string;
+    level?: number;
+    status?: number;
   };
 
   type UpdateMenuReply = {};
@@ -438,6 +649,17 @@ declare namespace API {
     status?: number;
   };
 
+  type UpdatePostReply = {};
+
+  type UpdatePostRequest = {
+    post_id?: string;
+    title?: string;
+    body?: string;
+    tags?: string[];
+    type?: number;
+    status?: number;
+  };
+
   type UpdateProfileReply = {};
 
   type UpdateProfileRequest = {
@@ -454,6 +676,15 @@ declare namespace API {
     describe?: string;
     status?: number;
     alias?: string;
+  };
+
+  type UpdateTenantReply = {};
+
+  type UpdateTenantRequest = {
+    uid?: string;
+    name?: string;
+    alias?: string;
+    describe?: string;
   };
 
   type UpdateUsernameReply = {};
